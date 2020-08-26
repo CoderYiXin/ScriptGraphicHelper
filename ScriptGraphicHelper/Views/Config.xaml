@@ -11,7 +11,7 @@
         TextElement.FontWeight="Normal"
         TextElement.FontSize="14"
         FontFamily="{materialDesign:MaterialDesignFont}"
-        Title="配置" Height="375" Width="300" Loaded="Window_Loaded">
+        Title="配置" Height="435" Width="300" Loaded="Window_Loaded">
     <Grid>
         <StackPanel Width="Auto" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Top" >
             <StackPanel Margin="15,30,15,15" HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Horizontal">
@@ -43,6 +43,16 @@
                     Style="{StaticResource MaterialDesignTabRadioButton}" 
                     IsChecked="False" x:Name="HintColorShow"
                     Content="勾选列表着色" />
+            </StackPanel>
+            <StackPanel Margin="15,15" HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Horizontal">
+                <RadioButton 
+                    Style="{StaticResource MaterialDesignTabRadioButton}"
+                    IsChecked="True"
+                    Content="生成忽略范围" />
+                <RadioButton 
+                    Style="{StaticResource MaterialDesignTabRadioButton}" 
+                    IsChecked="False" x:Name="IsAddRange"
+                    Content="生成添加范围" />
             </StackPanel>
             <TextBox x:Name="AllOffset" Margin="15,0,15,15"
                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"

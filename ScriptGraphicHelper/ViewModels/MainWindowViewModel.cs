@@ -54,6 +54,7 @@ namespace ScriptGraphicHelper.ViewModels
             get { return _createStr; }
             set { SetProperty(ref _createStr, value); }
         }
+
         private ObservableCollection<string> _emulatorInfo;
         public ObservableCollection<string> EmulatorInfo
         {
@@ -509,9 +510,9 @@ namespace ScriptGraphicHelper.ViewModels
         public ICommand Img_MouseLeftButtonUp => new DelegateCommand<System.Windows.Controls.Image>((e) =>
         {
             e.ReleaseMouseCapture();
-            if (SelectRectangleVisibility == Visibility.Visible && EndPoint.X >= StartPoint.X + 50 && EndPoint.Y >= StartPoint.Y + 50)
+            if (SelectRectangleVisibility == Visibility.Visible && EndPoint.X >= StartPoint.X + 75 && EndPoint.Y >= StartPoint.Y + 75)
             {
-                Range = "m," + StartPoint.X.ToString() + "," + StartPoint.Y.ToString() + "," + EndPoint.X.ToString() + "," + EndPoint.Y.ToString();
+                Range = "m," + Math.Floor(StartPoint.X).ToString() + "," + Math.Floor(StartPoint.Y).ToString() + "," + Math.Floor(EndPoint.X).ToString() + "," + Math.Floor(EndPoint.Y).ToString();
                 SelectRectangleVisibility = Visibility.Collapsed;
                 LoupeVisibility = Visibility.Visible;
                 return;
@@ -709,6 +710,8 @@ namespace ScriptGraphicHelper.ViewModels
             setting.LastOffsetColorShow = e.OffsetList.Visibility == Visibility.Visible;
             setting.LastAllOffset = ColorInfo.AllOffsetColor;
             setting.LastHintColorShow = ColorInfo.BrushMode;
+            setting.LastIsAddRange = CreateColorStrHelper.IsAddRange;
+
             Config config = new Config(setting);
             if ((bool)config.ShowDialog())
             {
@@ -731,6 +734,7 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     AllOffsetChanged(result.LastAllOffset);
                 }
+                CreateColorStrHelper.IsAddRange = result.LastIsAddRange;
             }
         });
         public void AllOffsetChanged(string offsetStr)

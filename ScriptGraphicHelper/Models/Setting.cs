@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace ScriptGraphicHelper.Models
+﻿namespace ScriptGraphicHelper.Models
 {
     public class Setting
     {
@@ -12,5 +10,6 @@ namespace ScriptGraphicHelper.Models
         public bool LastOffsetColorShow { get; set; } = false;
         public int LastHintColorShow { get; set; } = 0;
         public string LastAllOffset { get; set; } = "000000";
+        public bool LastIsAddRange { get; set; } = false;
     }
 }

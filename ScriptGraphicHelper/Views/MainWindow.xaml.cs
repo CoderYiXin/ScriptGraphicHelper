@@ -57,9 +57,10 @@ namespace ScriptGraphicHelper.Views
                 OffsetList.Visibility = setting.LastOffsetColorShow ? Visibility.Visible : Visibility.Collapsed;
                 ColorInfo.AllOffsetColor = setting.LastAllOffset;
                 ColorInfo.BrushMode = setting.LastHintColorShow;
+                CreateColorStrHelper.IsAddRange = setting.LastIsAddRange;
             }
             catch { }
-            
+
             showTimer.Tick += new EventHandler(HintMessage_Closed);
             showTimer.Interval = new TimeSpan(0, 0, 0, 5);
             showTimer.Start();
@@ -95,6 +96,7 @@ namespace ScriptGraphicHelper.Views
             setting.LastOffsetColorShow = OffsetList.Visibility == Visibility.Visible;
             setting.LastHintColorShow = ColorInfo.BrushMode;
             setting.LastAllOffset = ColorInfo.AllOffsetColor;
+            setting.LastIsAddRange = CreateColorStrHelper.IsAddRange;
             string settingStr = JsonConvert.SerializeObject(setting, Formatting.Indented);
             File.WriteAllText(CurrentDirectory + "\\setting.json", settingStr);
         }

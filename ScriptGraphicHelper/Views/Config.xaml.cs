@@ -1,17 +1,8 @@
 ﻿using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 using ScriptGraphicHelper.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ScriptGraphicHelper.Views
 {
@@ -35,7 +26,9 @@ namespace ScriptGraphicHelper.Views
                 LastSize = setting.LastSize,
                 LastOffsetColorShow = setting.LastOffsetColorShow,
                 LastHintColorShow = setting.LastHintColorShow,
-                LastAllOffset = setting.LastAllOffset
+                LastAllOffset = setting.LastAllOffset,
+                LastIsAddRange = setting.LastIsAddRange
+
             };
         }
 
@@ -51,6 +44,7 @@ namespace ScriptGraphicHelper.Views
             LastSize.IsChecked = _Setting.LastSize;
             AllOffsetShow.IsChecked = _Setting.LastOffsetColorShow;
             HintColorShow.IsChecked = _Setting.LastHintColorShow == 1;
+            IsAddRange.IsChecked = _Setting.LastIsAddRange;
             AllOffset.Text = _Setting.LastAllOffset != "000000" ? _Setting.LastAllOffset : string.Empty;
         }
 
@@ -59,6 +53,7 @@ namespace ScriptGraphicHelper.Views
             _Setting.LastSize = (bool)LastSize.IsChecked;
             _Setting.LastOffsetColorShow = (bool)AllOffsetShow.IsChecked;
             _Setting.LastHintColorShow = (bool)HintColorShow.IsChecked ? 1 : 0;
+            _Setting.LastIsAddRange = (bool)IsAddRange.IsChecked;
             if (AllOffset.Text.Trim().Length == 6)
             {
                 _Setting.LastAllOffset = AllOffset.Text;

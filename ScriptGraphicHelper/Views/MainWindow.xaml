@@ -10,7 +10,7 @@
         TextElement.FontSize="14"
         FontFamily="{materialDesign:MaterialDesignFont}"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        Title="综合图色助手 V1.0.9" Width="1760" Height="990" Loaded="Window_Loaded" Closed="Window_Closed" SizeChanged="Window_SizeChanged" PreviewKeyDown="Window_PreviewKeyDown">
+        Title="综合图色助手 V1.1.0" Width="1760" Height="990" Loaded="Window_Loaded" Closed="Window_Closed" SizeChanged="Window_SizeChanged" PreviewKeyDown="Window_PreviewKeyDown">
     <Window.InputBindings>
         <KeyBinding  Key="F1" Gesture="F1"  Command="{Binding ClearData_Click}"></KeyBinding>
         <KeyBinding  Key="F2" Gesture="F2"  Command="{Binding ConfigSet_Click}" CommandParameter="{Binding ElementName=_Window}"></KeyBinding>
