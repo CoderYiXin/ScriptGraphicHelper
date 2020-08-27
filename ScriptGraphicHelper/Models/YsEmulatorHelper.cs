@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using static System.Environment;
@@ -123,6 +124,14 @@ namespace ScriptGraphicHelper.Models
                 }
                 string BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
                 Screencap(Index, "/mnt/sdcard/Pictures", BmpName);
+                for (int i = 0; i < 10; i++)
+                {
+                    Thread.Sleep(200);
+                    if (File.Exists(BmpPath + "\\" + BmpName))
+                    {
+                        break;
+                    }
+                }
                 try
                 {
                     FileStream fileStream = new FileStream(BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);

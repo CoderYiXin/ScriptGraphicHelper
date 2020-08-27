@@ -33,6 +33,7 @@ namespace ScriptGraphicHelper.Models
         {
             Emulators.Add(new LdEmulatorHelper(0));
             Emulators.Add(new LdEmulatorHelper(1));
+            Emulators.Add(new LdEmulatorHelper(2));
             Emulators.Add(new YsEmulatorHelper());
             Emulators.Add(new XyEmulatorHelper());
             Emulators.Add(new MobileTcpHelper());

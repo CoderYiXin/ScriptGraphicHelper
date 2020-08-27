@@ -8,6 +8,7 @@ using System;
 using System.Drawing;
 using System.Windows;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace ScriptGraphicHelper.Models
 {
@@ -45,6 +46,22 @@ namespace ScriptGraphicHelper.Models
                     if (Path == string.Empty)
                     {
                         string path = GetInkTargetPath(CurrentDirectory, "雷电模拟器4.0.lnk");
+                        if (path != string.Empty)
+                        {
+                            int index = path.LastIndexOf("\\");
+                            Path = path.Substring(0, index + 1).Trim('"');
+                        }
+                    }
+                }
+                else if (version == 2)
+                {
+                    Name = "雷电模拟器64";
+                    RegistryKey Hkml = Registry.CurrentUser;
+                    RegistryKey Aimdir = Hkml.OpenSubKey("Software\\leidian\\ldplayer64", true);
+                    Path = Aimdir.GetValue("InstallDir").ToString();
+                    if (Path == string.Empty)
+                    {
+                        string path = GetInkTargetPath(CurrentDirectory, "雷电模拟器64.lnk");
                         if (path != string.Empty)
                         {
                             int index = path.LastIndexOf("\\");
@@ -191,6 +208,14 @@ namespace ScriptGraphicHelper.Models
                 }
                 string BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
                 Screencap(Index, "/mnt/sdcard/Pictures", BmpName);
+                for (int i = 0; i < 10; i++)
+                {
+                    Thread.Sleep(200);
+                    if (File.Exists(BmpPath + "\\" + BmpName))
+                    {
+                        break;
+                    }
+                }
                 try
                 {
                     FileStream fileStream = new FileStream(BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
