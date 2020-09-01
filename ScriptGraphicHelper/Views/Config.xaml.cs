@@ -28,7 +28,6 @@ namespace ScriptGraphicHelper.Views
                 LastHintColorShow = setting.LastHintColorShow,
                 LastAllOffset = setting.LastAllOffset,
                 LastIsAddRange = setting.LastIsAddRange
-
             };
         }
 

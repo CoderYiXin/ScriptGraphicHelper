@@ -14,7 +14,7 @@
         Title="tcp配置" Height="250" Width="250" ResizeMode="NoResize" Loaded="Window_Loaded">
     <Grid>
         <StackPanel Width="Auto" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Top" >
-            <TextBox x:Name="Address" Margin="20,10" Width="180"
+            <TextBox x:Name="Address" Text="192.168." Margin="20,10" Width="180"
                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                    materialDesign:HintAssist.Hint="地址"
                    materialDesign:HintAssist.FloatingScale="1" 

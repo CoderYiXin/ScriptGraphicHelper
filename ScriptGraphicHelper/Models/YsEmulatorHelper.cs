@@ -126,7 +126,7 @@ namespace ScriptGraphicHelper.Models
                 Screencap(Index, "/mnt/sdcard/Pictures", BmpName);
                 for (int i = 0; i < 10; i++)
                 {
-                    Thread.Sleep(200);
+                    Task.Delay(200).Wait();
                     if (File.Exists(BmpPath + "\\" + BmpName))
                     {
                         break;

@@ -10,7 +10,7 @@
         TextElement.FontSize="14"
         FontFamily="{materialDesign:MaterialDesignFont}"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        Title="综合图色助手 V1.1.0" Width="1760" Height="990" Loaded="Window_Loaded" Closed="Window_Closed" SizeChanged="Window_SizeChanged" PreviewKeyDown="Window_PreviewKeyDown">
+        Title="综合图色助手 V1.1.1" Width="1760" Height="990" Loaded="Window_Loaded" Closed="Window_Closed" SizeChanged="Window_SizeChanged" PreviewKeyDown="Window_PreviewKeyDown">
     <Window.InputBindings>
         <KeyBinding  Key="F1" Gesture="F1"  Command="{Binding ClearData_Click}"></KeyBinding>
         <KeyBinding  Key="F2" Gesture="F2"  Command="{Binding ConfigSet_Click}" CommandParameter="{Binding ElementName=_Window}"></KeyBinding>
@@ -83,7 +83,8 @@
                         <ComboBoxItem>触动多点比色格式</ComboBoxItem>
                         <ComboBoxItem>AJ多点找色格式</ComboBoxItem>
                         <ComboBoxItem>EC多点找色格式</ComboBoxItem>
-                        <ComboBoxItem>自定义格式</ComboBoxItem>
+                        <ComboBoxItem>自定义找色格式</ComboBoxItem>
+                        <ComboBoxItem>自定义比色格式</ComboBoxItem>
                         <ComboBoxItem>锚点多点比色格式</ComboBoxItem>
                     </ComboBox>
                     <TextBox x:Name="Range" Margin="20,10" Width="120" Text="{Binding Range,Mode=TwoWay}"
@@ -101,6 +102,7 @@
                    materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0" />
                     <Button x:Name="Copy" Margin="20,10" Click="Copy_Click" Width="120" Style="{DynamicResource MaterialDesignRaisedButton}">复制</Button>
                     <Button x:Name="Clear" Margin="20,10" Width="120" Command="{Binding Clear_Click}" Style="{DynamicResource MaterialDesignRaisedButton}">清空</Button>
+                    <Button x:Name="Test_" Margin="20,10" Width="120" Click="Test_Click" Style="{DynamicResource MaterialDesignRaisedButton}">清空</Button>
                 </StackPanel>
             </ScrollViewer>
         </Grid>
@@ -157,10 +159,8 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-
-
-
                     </DataGrid.Columns>
+                    
                     <DataGrid.ContextMenu>
                         <ContextMenu Style="{DynamicResource MaterialDesignContextMenu}">
                             <MenuItem Header="复制坐标" Click="CopyPoint_Click"/>

@@ -166,7 +166,14 @@ namespace ScriptGraphicHelper.Views
         }
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(ColorString.Text);
+            try
+            {
+                Clipboard.SetDataObject(ColorString.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
+            }
         }
 
         private void Panel_5_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -185,6 +192,18 @@ namespace ScriptGraphicHelper.Views
                 Panel_5.Visibility = Visibility.Hidden;
                 showTimer.Stop();
             }
+        }
+
+        private void Test_Click(object sender, RoutedEventArgs e)
+        {
+            // StreamReader sr = File.OpenText(CurrentDirectory + "\\setting.json");
+            //string configStr = sr.ReadToEnd();
+
+            string configStr = "{x}|{y}|{color}-{offsetColor}";
+             configStr = configStr.Substring(configStr.IndexOf("{color}"));
+            Debug.WriteLine(configStr);
+
+
         }
     }
 }

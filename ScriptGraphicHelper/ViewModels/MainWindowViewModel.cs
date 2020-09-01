@@ -334,11 +334,11 @@ namespace ScriptGraphicHelper.ViewModels
                              string str = CreateColorStrHelper.Create(0, ColorInfos);
                              TestResult = GraphicHelper.CompareColor(str.Trim('"'), sim[SimSelectedIndex]).ToString();
                          }
-                         else if (FormatSelectedIndex == 9)
+                         else if (FormatSelectedIndex == 10)
                          {
                              double width = ColorInfos[0].Width;
                              double height = ColorInfos[1].Height;
-                             string str = CreateColorStrHelper.Create(10, ColorInfos);
+                             string str = CreateColorStrHelper.Create(11, ColorInfos);
                              TestResult = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sim[SimSelectedIndex]).ToString();
                          }
                          else
@@ -389,7 +389,7 @@ namespace ScriptGraphicHelper.ViewModels
                  });
         public ICommand Format_SelectionChanged => new DelegateCommand<MainWindow>((e) =>
         {
-            if (FormatSelectedIndex == 9)
+            if (FormatSelectedIndex == 10)
             {
                 e.TheAnchors.Visibility = Visibility.Visible;
                 ColorInfos.Clear();
@@ -524,7 +524,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             byte[] bytes = GraphicHelper.GetPixel((int)PointX, (int)PointY);
             Color color = Color.FromArgb(255, bytes[0], bytes[1], bytes[2]);
-            if (FormatSelectedIndex != 9)
+            if (FormatSelectedIndex != 10)
             {
                 ColorInfos.Add(new ColorInfo(ColorInfos.Count, new Point(PointX, PointY), color));
             }
@@ -594,7 +594,7 @@ namespace ScriptGraphicHelper.ViewModels
         });
         public ICommand GetOffset_Click => new DelegateCommand(() =>
         {
-            if (ColorInfos.Count == 0 || ColorInfoSelect == -1)
+            if (ColorInfos.Count <= 1 || ColorInfoSelect == -1)
             {
                 return;
             }

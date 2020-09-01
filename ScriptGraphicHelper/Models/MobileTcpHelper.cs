@@ -64,7 +64,7 @@ namespace ScriptGraphicHelper.Models
                     byte[] buf = new byte[256];
                     for (int i = 0; i < 40; i++)
                     {
-                        Thread.Sleep(100);
+                        Task.Delay(100).Wait();
                         if (networkStream.DataAvailable)
                         {
                             int length = networkStream.Read(buf, 0, 256);
@@ -91,7 +91,7 @@ namespace ScriptGraphicHelper.Models
             networkStream.WriteByte(9);
             for (int i = 0; i < 40; i++)
             {
-                Thread.Sleep(50);
+                Task.Delay(50).Wait();
                 byte[] _ = new byte[9];
                 if (networkStream.DataAvailable)
                 {
