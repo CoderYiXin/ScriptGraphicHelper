@@ -352,8 +352,8 @@ namespace ScriptGraphicHelper.ViewModels
                                  TestResult = "error";
                                  return;
                              }
-                             string[] _ = strArray[0].Split(",\"");
-                             System.Drawing.Point result = GraphicHelper.FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, _[1].Trim('"'), strArray[1].Trim('"'), sim[SimSelectedIndex]);
+                             string[] _str = strArray[0].Split(",\"");
+                             System.Drawing.Point result = GraphicHelper.FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, _str[^1].Trim('"'), strArray[1].Trim('"'), sim[SimSelectedIndex]);
                              if (result.X >= 0 && result.Y >= 0)
                              {
                                  Point point = e.Img.TranslatePoint(new Point(result.X, result.Y), e);

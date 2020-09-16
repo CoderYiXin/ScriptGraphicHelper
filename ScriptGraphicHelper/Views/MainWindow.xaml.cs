@@ -1,22 +1,18 @@
 ﻿using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
+using Newtonsoft.Json;
+using ScriptGraphicHelper.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using ScriptGraphicHelper.Models;
+using static System.Environment;
 using Color = System.Windows.Media.Color;
 using Point = System.Windows.Point;
-using Newtonsoft.Json;
-using static System.Environment;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace ScriptGraphicHelper.Views
 {
@@ -192,18 +188,6 @@ namespace ScriptGraphicHelper.Views
                 Panel_5.Visibility = Visibility.Hidden;
                 showTimer.Stop();
             }
-        }
-
-        private void Test_Click(object sender, RoutedEventArgs e)
-        {
-            // StreamReader sr = File.OpenText(CurrentDirectory + "\\setting.json");
-            //string configStr = sr.ReadToEnd();
-
-            string configStr = "{x}|{y}|{color}-{offsetColor}";
-             configStr = configStr.Substring(configStr.IndexOf("{color}"));
-            Debug.WriteLine(configStr);
-
-
         }
     }
 }
