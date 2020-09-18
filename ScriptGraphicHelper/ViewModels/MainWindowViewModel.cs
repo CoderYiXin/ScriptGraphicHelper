@@ -10,19 +10,16 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using static System.Environment;
 using Color = System.Drawing.Color;
 using Point = System.Windows.Point;
 using Range = ScriptGraphicHelper.Models.Range;
-using static System.Environment;
-using Prism.Services.Dialogs;
 
 namespace ScriptGraphicHelper.ViewModels
 {
@@ -338,8 +335,22 @@ namespace ScriptGraphicHelper.ViewModels
                          {
                              double width = ColorInfos[0].Width;
                              double height = ColorInfos[1].Height;
-                             string str = CreateColorStrHelper.Create(11, ColorInfos);
+                             string str = CreateColorStrHelper.Create(12, ColorInfos);
                              TestResult = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sim[SimSelectedIndex]).ToString();
+                         }
+                         else if (FormatSelectedIndex == 11)
+                         {
+                             double width = ColorInfos[0].Width;
+                             double height = ColorInfos[1].Height;
+                             string str = CreateColorStrHelper.Create(13, ColorInfos);
+                             System.Drawing.Point result = GraphicHelper.AnchorsFindColor(width, height, str.Trim('"'),  sim[SimSelectedIndex]);
+                             if (result.X >= 0 && result.Y >= 0)
+                             {
+                                 Point point = e.Img.TranslatePoint(new Point(result.X, result.Y), e);
+                                 FindResultMargin = new Thickness(point.X - 14, point.Y - 38, 0, 0);
+                                 FindResultVisibility = Visibility.Visible;
+                             }
+                             TestResult = result.ToString();
                          }
                          else
                          {
@@ -389,10 +400,13 @@ namespace ScriptGraphicHelper.ViewModels
                  });
         public ICommand Format_SelectionChanged => new DelegateCommand<MainWindow>((e) =>
         {
-            if (FormatSelectedIndex == 10)
+            if (FormatSelectedIndex == 10 || FormatSelectedIndex == 11)
             {
-                e.TheAnchors.Visibility = Visibility.Visible;
-                ColorInfos.Clear();
+                if (e.TheAnchors.Visibility!= Visibility.Visible)
+                {
+                    e.TheAnchors.Visibility = Visibility.Visible;
+                    ColorInfos.Clear();
+                }
             }
             else
             {
@@ -524,7 +538,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             byte[] bytes = GraphicHelper.GetPixel((int)PointX, (int)PointY);
             Color color = Color.FromArgb(255, bytes[0], bytes[1], bytes[2]);
-            if (FormatSelectedIndex != 10)
+            if (FormatSelectedIndex != 10 && FormatSelectedIndex != 11)
             {
                 ColorInfos.Add(new ColorInfo(ColorInfos.Count, new Point(PointX, PointY), color));
             }

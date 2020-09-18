@@ -22,9 +22,11 @@ namespace ScriptGraphicHelper.Models
                 6 => AutojsFindStr(colorInfos, rect),
                 7 => EcFindStr(colorInfos, rect),
                 8 => DiyFindStr(colorInfos, rect),
-                9=> DiyCompareStr(colorInfos),
+                9 => DiyCompareStr(colorInfos),
                 10 => AnchorsCompareStr(colorInfos),
-                11=> AnchorsCompareStrTest(colorInfos),
+                11 => AnchorsCompareStr(colorInfos),
+                12 => AnchorsCompareStrTest(colorInfos),
+                13 => AnchorsCompareStrTest(colorInfos),
                 _ => CompareStr(colorInfos),
             };
         }
@@ -99,9 +101,9 @@ namespace ScriptGraphicHelper.Models
                     }
                 }
             }
-            colorStr ="\""+ colorStr.Trim(',')+ "\"";
+            colorStr = "\"" + colorStr.Trim(',') + "\"";
             string result = diyFormat.CompareStrFormat;
-           
+
             if (result.IndexOf("{colorStr}") != -1)
             {
                 result = result.Replace("{colorStr}", colorStr);
@@ -222,7 +224,7 @@ namespace ScriptGraphicHelper.Models
                     }
                 }
             }
-            colorStr[1] = "\""+colorStr[1].Trim(',')+ "\"";
+            colorStr[1] = "\"" + colorStr[1].Trim(',') + "\"";
             string result = diyFormat.FindStrFormat;
             if (result.IndexOf("{range}") != -1)
             {
@@ -492,32 +494,32 @@ namespace ScriptGraphicHelper.Models
 
         public static string AnchorsCompareStr(ObservableCollection<ColorInfo> colorInfos)
         {
-            string result = colorInfos[0].Width.ToString() + "," + colorInfos[0].Height.ToString() + ",[";
+            string result = "[" + colorInfos[0].Width.ToString() + "," + colorInfos[0].Height.ToString() + ",\r\n[";
             foreach (ColorInfo colorInfo in colorInfos)
             {
                 if (colorInfo.IsChecked)
                 {
                     if (colorInfo.Anchors == "L")
                         result += "[left,";
-                    if (colorInfo.Anchors == "C")
+                    else if (colorInfo.Anchors == "C")
                         result += "[center,";
-                    if (colorInfo.Anchors == "R")
+                    else if (colorInfo.Anchors == "R")
                         result += "[right,";
 
                     if (colorInfo.OffsetColor == "000000")
                     {
                         result += colorInfo.ThePoint.X.ToString() + "," + colorInfo.ThePoint.Y.ToString() + ",0x" + colorInfo.TheColor.R.ToString("x2") +
-                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "],";
+                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "],\r\n";
                     }
                     else
                     {
                         result += colorInfo.ThePoint.X.ToString() + "," + colorInfo.ThePoint.Y.ToString() + ",0x" + colorInfo.TheColor.R.ToString("x2") +
-                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + ",0x" + colorInfo.OffsetColor + "],";
+                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + ",0x" + colorInfo.OffsetColor + "],\r\n";
                     }
                 }
             }
-            result = result.Trim(',');
-            result += "]";
+            result = result.Trim(",\r\n".ToCharArray());
+            result += "]\r\n]";
             return result;
         }
         public static string AnchorsCompareStrTest(ObservableCollection<ColorInfo> colorInfos)

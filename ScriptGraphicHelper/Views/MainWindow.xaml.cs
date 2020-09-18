@@ -50,6 +50,20 @@ namespace ScriptGraphicHelper.Views
                 }
                 Sim.SelectedIndex = setting.LastSim;
                 Format.SelectedIndex = setting.LastFormat;
+                if (Format.SelectedIndex == 10 || Format.SelectedIndex == 11)
+                {
+                    if (TheAnchors.Visibility != Visibility.Visible)
+                    {
+                        TheAnchors.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    if (TheAnchors.Visibility != Visibility.Collapsed)
+                    {
+                        TheAnchors.Visibility = Visibility.Collapsed;
+                    }
+                }
                 OffsetList.Visibility = setting.LastOffsetColorShow ? Visibility.Visible : Visibility.Collapsed;
                 ColorInfo.AllOffsetColor = setting.LastAllOffset;
                 ColorInfo.BrushMode = setting.LastHintColorShow;

@@ -18,7 +18,7 @@ namespace ScriptGraphicHelper.Models
         public static int Height = 0;
         public static int FormatSize;
         public static int Stride;
-        public static byte[] Bytes;
+        public static byte[] ScreenData;
 
         public static void KeepScreen(Bitmap bitmap)
         {
@@ -28,8 +28,8 @@ namespace ScriptGraphicHelper.Models
             IntPtr IntPtr = Data.Scan0;
             FormatSize = Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
             Stride = Data.Stride;
-            Bytes = new byte[Stride * Height];
-            Marshal.Copy(IntPtr, Bytes, 0, Stride * Height);
+            ScreenData = new byte[Stride * Height];
+            Marshal.Copy(IntPtr, ScreenData, 0, Stride * Height);
             bitmap.UnlockBits(Data);
         }
         public static byte[] GetPixel(int x, int y)
@@ -40,9 +40,9 @@ namespace ScriptGraphicHelper.Models
                 if (x < Width && y < Height)
                 {
                     int location = x * FormatSize + Stride * y;
-                    retRGB[0] = Bytes[location + 2];
-                    retRGB[1] = Bytes[location + 1];
-                    retRGB[2] = Bytes[location];
+                    retRGB[0] = ScreenData[location + 2];
+                    retRGB[1] = ScreenData[location + 1];
+                    retRGB[2] = ScreenData[location];
                 }
             }
             catch
@@ -54,36 +54,92 @@ namespace ScriptGraphicHelper.Models
 
         public static bool AnchorsCompareColor(double width, double height, string colorString, byte sim = 95)
         {
-            string color = colorString.Trim("\"".ToCharArray());
-            string[] findColorArr = color.Split(',');
+            string[] compareColorArr = colorString.Trim('"').Split(',');
 
             double multiple = Height / height;
             string result = string.Empty;
-            for (int i = 0; i < findColorArr.Length; i++)
+            for (int i = 0; i < compareColorArr.Length; i++)
             {
-                string[] findColor = findColorArr[i].Split('|');
-                double findX = int.Parse(findColor[1]);
-                double findY = int.Parse(findColor[2]);
-                if (findColor[0] == "L")
+                string[] compareColor = compareColorArr[i].Split('|');
+                double findX = int.Parse(compareColor[1]);
+                double findY = int.Parse(compareColor[2]);
+                if (compareColor[0] == "L")
                 {
                     findX = Math.Floor(findX * multiple);
                     findY = Math.Floor(findY * multiple);
                 }
-                else if (findColor[0] == "C")
+                else if (compareColor[0] == "C")
                 {
                     findX = Math.Floor(Width / 2 - (width / 2 - findX) * multiple);
                     findY = Math.Floor(findY * multiple);
                 }
-                else if (findColor[0] == "R")
+                else if (compareColor[0] == "R")
                 {
                     findX = Math.Floor(Width - (width - findX) * multiple);
                     findY = Math.Floor(findY * multiple);
                 }
-                result += findX.ToString() + "|" + findY.ToString() + "|" + findColor[3] + ",";
+                result += findX.ToString() + "|" + findY.ToString() + "|" + compareColor[3] + ",";
             }
             result = result.Trim(',');
             return CompareColor(result, sim);
+        }
+        public static Point AnchorsFindColor(double width, double height, string colorString, byte sim = 95)
+        {
+            string compareColorStr = colorString.Trim('"');
+            string[] compareColorArr = compareColorStr.Split(',');
+            if (compareColorArr.Length < 2)
+            {
+                System.Windows.MessageBox.Show("多点找色至少需要勾选两个颜色才可进行测试!", "错误");
+                return new Point(-1,-1);
+            }
+            double multiple = Height / height;
+            string[] startColorArr = compareColorArr[0].Split('|');
+            double x = int.Parse(startColorArr[1]);
+            double y = int.Parse(startColorArr[2]);
+            double startX = -1;
+            double startY = -1;
+            if (startColorArr[0] == "L")
+            {
+                startX = Math.Floor(x * multiple);
+                startY = Math.Floor(y * multiple);
+            }
+            else if (startColorArr[0] == "C")
+            {
+                startX = Math.Floor(Width / 2 - (width / 2 - x) * multiple);
+                startY = Math.Floor(y * multiple);
+            }
+            else if (startColorArr[0] == "R")
+            {
+                startX = Math.Floor(Width - (width - x) * multiple);
+                startY = Math.Floor(y * multiple);
+            }
 
+            string result = string.Empty;
+            for (int i = 1; i < compareColorArr.Length; i++)
+            {
+                string[] compareColor = compareColorArr[i].Split('|');
+                double findX = int.Parse(compareColor[1]);
+                double findY = int.Parse(compareColor[2]);
+                if (compareColor[0] == "L")
+                {
+                    findX = Math.Floor(findX * multiple) - startX;
+                    findY = Math.Floor(findY * multiple) - startY;
+                }
+                else if (compareColor[0] == "C")
+                {
+                    findX = Math.Floor(Width / 2 - (width / 2 - findX) * multiple) - startX;
+                    findY = Math.Floor(findY * multiple) - startY;
+                }
+                else if (compareColor[0] == "R")
+                {
+                    findX = Math.Floor(Width - (width - findX) * multiple) - startX;
+                    findY = Math.Floor(findY * multiple) - startY;
+                }
+                result += findX.ToString() + "|" + findY.ToString() + "|" + compareColor[3] + ",";
+            }
+            result = result.Trim(',');
+            //return CompareColor(result, sim);
+            return FindMultiColor(0, 0, Width-1, Height-1, startColorArr[3], result, sim);
         }
         public static bool CompareColor(string colorString, byte sim = 95, int X = 0, int Y = 0)
         {
@@ -149,14 +205,14 @@ namespace ScriptGraphicHelper.Models
 
                 for (int i = startY; i <= endY; i++)
                 {
+                    int location = startX * FormatSize + Stride * i;
                     for (int j = startX; j <= endX; j++)
                     {
-                        int location = j * FormatSize + Stride * i;
-                        if (Math.Abs(Bytes[location + 2] - findR) <= offsetR + similarity)
+                        if (Math.Abs(ScreenData[location + 2] - findR) <= offsetR + similarity)
                         {
-                            if (Math.Abs(Bytes[location + 1] - findG) <= offsetG + similarity)
+                            if (Math.Abs(ScreenData[location + 1] - findG) <= offsetG + similarity)
                             {
-                                if (Math.Abs(Bytes[location] - findB) <= offsetB + similarity)
+                                if (Math.Abs(ScreenData[location] - findB) <= offsetB + similarity)
                                 {
                                     if (CompareColor(compareColorString, sim, j, i))
                                     {
@@ -165,6 +221,7 @@ namespace ScriptGraphicHelper.Models
                                 }
                             }
                         }
+                        location += 4;
                     }
                 }
             }
