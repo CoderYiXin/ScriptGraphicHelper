@@ -10,8 +10,9 @@ namespace ScriptGraphicHelper.Views
     /// </summary>
     public partial class TcpConfig : Window
     {
+        public static string LastAddress { get; set; } = string.Empty;
         public string MyAddress { get; set; } = string.Empty;
-        public int MyPort { get; set; } = -1;
+        public int MyPort { get; set; } = 5678;
         public TcpConfig()
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -26,12 +27,18 @@ namespace ScriptGraphicHelper.Views
             theme.SecondaryMid = new ColorPair(Color.FromRgb(0x66, 0x66, 0x66), Colors.White);
             theme.PrimaryMid = new ColorPair(Color.FromRgb(0x66, 0x66, 0x66), Colors.White);
             paletteHelper.SetTheme(theme);
+            if (LastAddress!=string.Empty)
+            {
+                Address.Text = LastAddress;
+            }
+            Port.Text = MyPort.ToString();
         }
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
             if (Address.Text != string.Empty && Port.Text != string.Empty)
             {
+                LastAddress = Address.Text.Trim();
                 MyAddress = Address.Text.Trim();
                 MyPort =int.Parse(Port.Text.Trim());
                 this.DialogResult = true;

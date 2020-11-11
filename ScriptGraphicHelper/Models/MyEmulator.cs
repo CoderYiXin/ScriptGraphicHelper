@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ScriptGraphicHelper.Models.ScriptGraphicHelper.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -15,7 +16,7 @@ namespace ScriptGraphicHelper.Models
         public static List<KeyValuePair<int, string>> Info { get; set; }
         public static int Select { get; set; } = -1;
 
-        private static int _index;
+        private static int _index = -1;
         public static int Index
         {
             get { return _index; }
@@ -37,6 +38,7 @@ namespace ScriptGraphicHelper.Models
             Emulators.Add(new YsEmulatorHelper());
             Emulators.Add(new XyEmulatorHelper());
             Emulators.Add(new MobileTcpHelper());
+            Emulators.Add(new HwndHelper());
             Result = new ObservableCollection<string>();
 
             foreach (var emulator in Emulators)

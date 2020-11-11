@@ -12,6 +12,12 @@ using ScriptGraphicHelper.Views;
 
 namespace ScriptGraphicHelper.Models
 {
+    static class PingState
+    {
+        public static byte Stop { get; set; } = 0;
+        public static byte Ping { get; set; } = 1;
+        public static byte ScreenShot { get; set; } = 2;
+    }
     class MobileTcpHelper : EmulatorHelper
     {
         public override string Path { get; set; } = "tcp连接";
@@ -31,7 +37,7 @@ namespace ScriptGraphicHelper.Models
                 try
                 {
                     IsInit = false;
-                    networkStream.WriteByte(2);
+                    networkStream.WriteByte(PingState.Stop);
                     networkStream.Close();
                     MyTcpClient.Close();
                 }
@@ -88,7 +94,7 @@ namespace ScriptGraphicHelper.Models
 
         private bool GetTcpState()
         {
-            networkStream.WriteByte(9);
+            networkStream.WriteByte(PingState.Ping);
             for (int i = 0; i < 40; i++)
             {
                 Task.Delay(50).Wait();
@@ -98,11 +104,11 @@ namespace ScriptGraphicHelper.Models
                     int length = networkStream.Read(_, 0, 1);
                     if (length == 1)
                     {
-                        if (_[0] == 9)
+                        if (_[0] == PingState.Ping)
                         {
                             return true;
                         }
-                        else if (_[0] == 7)
+                        else if (_[0] == PingState.Stop)
                         {
                             return false;
                         }
@@ -122,18 +128,11 @@ namespace ScriptGraphicHelper.Models
                         MessageBox.Show("Tcp已断开连接! 请重新连接");
                         return new Bitmap(-1, -1);
                     }
-                    networkStream.WriteByte(1);
+                    networkStream.WriteByte(PingState.ScreenShot);
                     byte[] data = new byte[Width * Height * 4];
                     int offset = 0;
                     while (offset < data.Length)
                     {
-                        //byte[] buf = new byte[1024];
-                        //if (networkStream.DataAvailable)
-                        //{
-                        //    int length = networkStream.Read(buf, 0, 1024);
-                        //    Buffer.BlockCopy(buf, 0, data, offset, length);
-                        //    offset += length;
-                        //}
                         int len = data.Length - offset;
                         int length = networkStream.Read(data, offset, len);
                         offset += length;

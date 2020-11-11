@@ -7,10 +7,13 @@ using ScriptGraphicHelper.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -235,6 +238,16 @@ namespace ScriptGraphicHelper.ViewModels
             }
 
         });
+        public ICommand ClearEmulatorOptions_Click => new DelegateCommand(() =>
+        {
+            if (MyEmulator.IsInit == 2)
+            {
+                FormatSelectedIndex = -1;
+                MyEmulator.Dispose();
+                EmulatorInfo.Clear();
+                EmulatorInfo = MyEmulator.Init();
+            }
+        });
         public ICommand Emulator_SelectionChanged => new DelegateCommand<MainWindow>((e) =>
                  {
                      if (MyEmulator.IsInit == 2)
@@ -245,9 +258,14 @@ namespace ScriptGraphicHelper.ViewModels
                      {
                          if (EmulatorInfo.Count != 0)
                          {
-                             if (e.EmulatorOptions.SelectedIndex == EmulatorInfo.Count - 1)
+
+                             if (e.EmulatorOptions.SelectedIndex == EmulatorInfo.Count - 2)
                              {
                                  EmulatorOptionsHint = "tcp连接";
+                             }
+                             else if (e.EmulatorOptions.SelectedIndex == EmulatorInfo.Count - 1)
+                             {
+                                 EmulatorOptionsHint = "句柄";
                              }
                              else
                              {
@@ -273,25 +291,25 @@ namespace ScriptGraphicHelper.ViewModels
                  });
         public ICommand ScreenShot_Click => new DelegateCommand<MainWindow>(async (e) =>
         {
-                e.ScreenShot.Cursor = Cursors.Wait;
-                e.Cursor = Cursors.Wait;
-                if (MyEmulator.Select == -1 || MyEmulator.Index == -1)
-                {
-                    MessageBox.Show("请先选择模拟器");
-                    e.Cursor = Cursors.Arrow;
-                    return;
-                }
-                Bitmap bmp = await MyEmulator.ScreenShot();
-                if (bmp.Width != 1)
-                {
-                    Bmp = bmp;
-                    ImgHeight = Bmp.Height;
-                    ImgWidth = Bmp.Width;
-                    ImgSource = Bitmap2BitmapImage(Bmp);
-                    GraphicHelper.KeepScreen(Bmp);
-                }
-                e.ScreenShot.Cursor = Cursors.Arrow;
+            e.ScreenShot.Cursor = Cursors.Wait;
+            e.Cursor = Cursors.Wait;
+            if (MyEmulator.Select == -1 || MyEmulator.Index == -1)
+            {
+                MessageBox.Show("请先配置 -> (模拟器/tcp/句柄)");
                 e.Cursor = Cursors.Arrow;
+                return;
+            }
+            Bitmap bmp = await MyEmulator.ScreenShot();
+            if (bmp.Width != 1)
+            {
+                Bmp = bmp;
+                ImgHeight = Bmp.Height;
+                ImgWidth = Bmp.Width;
+                ImgSource = Bitmap2BitmapImage(Bmp);
+                GraphicHelper.KeepScreen(Bmp);
+            }
+            e.ScreenShot.Cursor = Cursors.Arrow;
+            e.Cursor = Cursors.Arrow;
         });
         public ICommand Save_Click => new DelegateCommand(() =>
                  {
@@ -299,6 +317,7 @@ namespace ScriptGraphicHelper.ViewModels
                      {
                          SaveFileDialog saveFileDialog = new SaveFileDialog
                          {
+                             FileName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png",
                              Filter = "png files   (*.png)|*.png",
                              FilterIndex = 2,
                              RestoreDirectory = true
@@ -329,7 +348,7 @@ namespace ScriptGraphicHelper.ViewModels
                          if (FormatSelectedIndex == 0 || FormatSelectedIndex == 3 || FormatSelectedIndex == 5)
                          {
                              string str = CreateColorStrHelper.Create(0, ColorInfos);
-                             TestResult = GraphicHelper.CompareColor(str.Trim('"'), sim[SimSelectedIndex]).ToString();
+                             TestResult = GraphicHelper.CompareColorEx(str.Trim('"'), sim[SimSelectedIndex]).ToString();
                          }
                          else if (FormatSelectedIndex == 10)
                          {
@@ -343,7 +362,7 @@ namespace ScriptGraphicHelper.ViewModels
                              double width = ColorInfos[0].Width;
                              double height = ColorInfos[1].Height;
                              string str = CreateColorStrHelper.Create(13, ColorInfos);
-                             System.Drawing.Point result = GraphicHelper.AnchorsFindColor(width, height, str.Trim('"'),  sim[SimSelectedIndex]);
+                             System.Drawing.Point result = GraphicHelper.AnchorsFindColor(width, height, str.Trim('"'), sim[SimSelectedIndex]);
                              if (result.X >= 0 && result.Y >= 0)
                              {
                                  Point point = e.Img.TranslatePoint(new Point(result.X, result.Y), e);
@@ -402,7 +421,7 @@ namespace ScriptGraphicHelper.ViewModels
         {
             if (FormatSelectedIndex == 10 || FormatSelectedIndex == 11)
             {
-                if (e.TheAnchors.Visibility!= Visibility.Visible)
+                if (e.TheAnchors.Visibility != Visibility.Visible)
                 {
                     e.TheAnchors.Visibility = Visibility.Visible;
                     ColorInfos.Clear();
@@ -456,10 +475,8 @@ namespace ScriptGraphicHelper.ViewModels
             }
             return new Range(left >= 25 ? left - 25 : 0, top >= 25 ? top - 25 : 0, right + 25 > imgWidth ? imgWidth : right + 25, bottom + 25 > imgHeight ? imgHeight : bottom + 25);
         }
-
         private Point StartPoint { get; set; }
         private Point EndPoint { get; set; }
-
         public ICommand Img_MouseDown => new DelegateCommand<MainWindow>((e) =>
         {
             e.Img.CaptureMouse();
@@ -524,7 +541,7 @@ namespace ScriptGraphicHelper.ViewModels
         public ICommand Img_MouseLeftButtonUp => new DelegateCommand<System.Windows.Controls.Image>((e) =>
         {
             e.ReleaseMouseCapture();
-            if (SelectRectangleVisibility == Visibility.Visible && EndPoint.X >= StartPoint.X + 75 && EndPoint.Y >= StartPoint.Y + 75)
+            if (SelectRectangleVisibility == Visibility.Visible && EndPoint.X >= StartPoint.X + 20 && EndPoint.Y >= StartPoint.Y + 20)
             {
                 Range = "m," + Math.Floor(StartPoint.X).ToString() + "," + Math.Floor(StartPoint.Y).ToString() + "," + Math.Floor(EndPoint.X).ToString() + "," + Math.Floor(EndPoint.Y).ToString();
                 SelectRectangleVisibility = Visibility.Collapsed;
@@ -582,7 +599,7 @@ namespace ScriptGraphicHelper.ViewModels
                      {
                          string FileName = fileDialog.FileName;
                          FileStream fileStream = new FileStream(FileName, FileMode.Open, FileAccess.Read);
-                         Bmp = (Bitmap)System.Drawing.Image.FromStream(fileStream);
+                         Bmp = (Bitmap)Image.FromStream(fileStream);
                          ImgHeight = Bmp.Height;
                          ImgWidth = Bmp.Width;
                          ImgSource = Bitmap2BitmapImage(Bmp);
@@ -591,7 +608,6 @@ namespace ScriptGraphicHelper.ViewModels
                          GraphicHelper.KeepScreen(Bmp);
                      }
                  });
-
         public ICommand AddOffset_Click => new DelegateCommand(() =>
         {
             if (ColorInfos.Count > 0)
@@ -725,6 +741,7 @@ namespace ScriptGraphicHelper.ViewModels
             setting.LastAllOffset = ColorInfo.AllOffsetColor;
             setting.LastHintColorShow = ColorInfo.BrushMode;
             setting.LastIsAddRange = CreateColorStrHelper.IsAddRange;
+            setting.LastDMRegCode = Dmsoft.RegCode;
 
             Config config = new Config(setting);
             if ((bool)config.ShowDialog())
@@ -749,6 +766,7 @@ namespace ScriptGraphicHelper.ViewModels
                     AllOffsetChanged(result.LastAllOffset);
                 }
                 CreateColorStrHelper.IsAddRange = result.LastIsAddRange;
+                Dmsoft.RegCode = result.LastDMRegCode;
             }
         });
         public void AllOffsetChanged(string offsetStr)

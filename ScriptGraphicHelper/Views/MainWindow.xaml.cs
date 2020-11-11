@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using ScriptGraphicHelper.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -30,6 +31,7 @@ namespace ScriptGraphicHelper.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+         
             var paletteHelper = new PaletteHelper();
             ITheme theme = paletteHelper.GetTheme();
             theme.SetBaseTheme(Theme.Dark);
@@ -68,6 +70,7 @@ namespace ScriptGraphicHelper.Views
                 ColorInfo.AllOffsetColor = setting.LastAllOffset;
                 ColorInfo.BrushMode = setting.LastHintColorShow;
                 CreateColorStrHelper.IsAddRange = setting.LastIsAddRange;
+                Dmsoft.RegCode = setting.LastDMRegCode;
             }
             catch { }
 
@@ -107,6 +110,7 @@ namespace ScriptGraphicHelper.Views
             setting.LastHintColorShow = ColorInfo.BrushMode;
             setting.LastAllOffset = ColorInfo.AllOffsetColor;
             setting.LastIsAddRange = CreateColorStrHelper.IsAddRange;
+            setting.LastDMRegCode = Dmsoft.RegCode;
             string settingStr = JsonConvert.SerializeObject(setting, Formatting.Indented);
             File.WriteAllText(CurrentDirectory + "\\setting.json", settingStr);
         }

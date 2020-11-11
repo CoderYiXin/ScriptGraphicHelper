@@ -27,6 +27,7 @@ namespace ScriptGraphicHelper.Views
                 LastOffsetColorShow = setting.LastOffsetColorShow,
                 LastHintColorShow = setting.LastHintColorShow,
                 LastAllOffset = setting.LastAllOffset,
+                LastDMRegCode = setting.LastDMRegCode,
                 LastIsAddRange = setting.LastIsAddRange
             };
         }
@@ -45,6 +46,7 @@ namespace ScriptGraphicHelper.Views
             HintColorShow.IsChecked = _Setting.LastHintColorShow == 1;
             IsAddRange.IsChecked = _Setting.LastIsAddRange;
             AllOffset.Text = _Setting.LastAllOffset != "000000" ? _Setting.LastAllOffset : string.Empty;
+            DMRegCode.Text = _Setting.LastDMRegCode;
         }
 
         private void Ok_Click(object sender, RoutedEventArgs e)
@@ -53,6 +55,7 @@ namespace ScriptGraphicHelper.Views
             _Setting.LastOffsetColorShow = (bool)AllOffsetShow.IsChecked;
             _Setting.LastHintColorShow = (bool)HintColorShow.IsChecked ? 1 : 0;
             _Setting.LastIsAddRange = (bool)IsAddRange.IsChecked;
+            _Setting.LastDMRegCode = DMRegCode.Text.Trim();
             if (AllOffset.Text.Trim().Length == 6)
             {
                 _Setting.LastAllOffset = AllOffset.Text;

@@ -26,6 +26,11 @@ namespace ScriptGraphicHelper.Models
                     Name = "雷电模拟器3.0";
                     RegistryKey Hkml = Registry.CurrentUser;
                     RegistryKey Aimdir = Hkml.OpenSubKey("Software\\ChangZhi2\\dnplayer", true);
+                    if (Aimdir == null)
+                    {
+                        Path = string.Empty;
+                        return;
+                    }
                     Path = Aimdir.GetValue("InstallDir").ToString();
                     if (Path == string.Empty)
                     {
@@ -42,6 +47,11 @@ namespace ScriptGraphicHelper.Models
                     Name = "雷电模拟器4.0";
                     RegistryKey Hkml = Registry.CurrentUser;
                     RegistryKey Aimdir = Hkml.OpenSubKey("Software\\leidian\\ldplayer", true);
+                    if (Aimdir == null)
+                    {
+                        Path = string.Empty;
+                        return;
+                    }
                     Path = Aimdir.GetValue("InstallDir").ToString();
                     if (Path == string.Empty)
                     {
@@ -58,6 +68,11 @@ namespace ScriptGraphicHelper.Models
                     Name = "雷电模拟器64";
                     RegistryKey Hkml = Registry.CurrentUser;
                     RegistryKey Aimdir = Hkml.OpenSubKey("Software\\leidian\\ldplayer64", true);
+                    if (Aimdir==null)
+                    {
+                        Path = string.Empty;
+                        return;
+                    }
                     Path = Aimdir.GetValue("InstallDir").ToString();
                     if (Path == string.Empty)
                     {

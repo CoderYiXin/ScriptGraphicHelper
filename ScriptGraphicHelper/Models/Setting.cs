@@ -10,6 +10,7 @@
         public bool LastOffsetColorShow { get; set; } = false;
         public int LastHintColorShow { get; set; } = 0;
         public string LastAllOffset { get; set; } = "000000";
+        public string LastDMRegCode { get; set; } = string.Empty;
         public bool LastIsAddRange { get; set; } = false;
     }
 }

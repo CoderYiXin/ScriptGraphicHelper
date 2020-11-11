@@ -1,0 +1,169 @@
+﻿<Window
+    x:Class="ScriptGraphicHelper.Views.GetHwnd"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Models="clr-namespace:ScriptGraphicHelper.Models"
+    xmlns:VM="clr-namespace:ScriptGraphicHelper.ViewModels"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:domain="clr-namespace:ScriptGraphicHelper.Models"
+    xmlns:local="clr-namespace:ScriptGraphicHelper.Views"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
+    Title="配置"
+    Width="615"
+    Height="460"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{materialDesign:MaterialDesignFont}"
+    Loaded="Window_Loaded"
+    TextElement.FontSize="14"
+    TextElement.FontWeight="Normal"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    mc:Ignorable="d">
+    <Grid>
+        <StackPanel
+            Width="Auto"
+            Height="Auto"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Orientation="Horizontal">
+            <ScrollViewer
+                Focusable="False"
+                HorizontalScrollBarVisibility="Auto"
+                Style="{DynamicResource MaterialDesignScrollViewer}"
+                VerticalScrollBarVisibility="Auto">
+                <TreeView
+                    Name="HwndTree"
+                    Grid.Column="0"
+                    Width="400"
+                    Height="377"
+                    Margin="20,20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    ItemsSource="{Binding MovieCategories}"
+                    SelectedItemChanged="HwndTree_SelectedItemChanged"
+                    Style="{StaticResource MaterialDesignTreeView}">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type domain:MovieCategory}" ItemsSource="{Binding Movies}">
+                            <TextBlock Margin="3,2" Text="{Binding Info}" />
+                        </HierarchicalDataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+            </ScrollViewer>
+
+            <StackPanel>
+                <StackPanel
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal">
+                    <Button
+                        Width="auto"
+                        Height="auto"
+                        Margin="0,20,0,0"
+                        Cursor="Arrow"
+                        PreviewMouseDown="Button_PreviewMouseDown"
+                        PreviewMouseUp="Button_PreviewMouseUp"
+                        Style="{StaticResource MaterialDesignFlatButton}">
+                        <Image
+                            Width="24"
+                            Height="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            RenderOptions.BitmapScalingMode="Fant"
+                            Source="/Images/selectHwd.png" />
+                    </Button>
+                    <TextBlock
+                        Margin="0,20,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                        选择窗口
+                    </TextBlock>
+                </StackPanel>
+                <TextBox
+                    x:Name="BindHwnd"
+                    Width="100"
+                    Margin="20,20"
+                    materialDesign:HintAssist.FloatingOffset="0, -18"
+                    materialDesign:HintAssist.FloatingScale="0.8"
+                    materialDesign:HintAssist.Hint="绑定句柄"
+                    materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                    Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                <ComboBox
+                    x:Name="BindGraphicMode"
+                    Width="100"
+                    Margin="20,15"
+                    materialDesign:ColorZoneAssist.Mode="Inverted"
+                    materialDesign:HintAssist.FloatingOffset="0, -18"
+                    materialDesign:HintAssist.FloatingScale="0.8"
+                    materialDesign:HintAssist.Hint="图色模式"
+                    materialDesign:TextFieldAssist.HasClearButton="False"
+                    materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource SecondaryAccentBrush}"
+                    SelectedIndex="0"
+                    Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                    <ComboBoxItem>normal</ComboBoxItem>
+                    <ComboBoxItem>gdi</ComboBoxItem>
+                    <ComboBoxItem>gdi2</ComboBoxItem>
+                    <ComboBoxItem>dx2</ComboBoxItem>
+                    <ComboBoxItem>dx3</ComboBoxItem>
+                    <ComboBoxItem>dx.graphic.2d</ComboBoxItem>
+                    <ComboBoxItem>dx.graphic.2d.2</ComboBoxItem>
+                    <ComboBoxItem>dx.graphic.3d</ComboBoxItem>
+                    <ComboBoxItem>dx.graphic.3d.8</ComboBoxItem>
+                    <ComboBoxItem>dx.graphic.opengl</ComboBoxItem>
+                    <ComboBoxItem>dx.graphic.opengl.esv2</ComboBoxItem>
+                    <ComboBoxItem>dx.graphic.3d.10plus</ComboBoxItem>
+                </ComboBox>
+                <ComboBox
+                    x:Name="BindAttribute"
+                    Width="100"
+                    Margin="20,15"
+                    materialDesign:ColorZoneAssist.Mode="Inverted"
+                    materialDesign:HintAssist.FloatingOffset="0, -18"
+                    materialDesign:HintAssist.FloatingScale="0.8"
+                    materialDesign:HintAssist.Hint="公共属性"
+                    materialDesign:TextFieldAssist.HasClearButton="False"
+                    materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource SecondaryAccentBrush}"
+                    SelectedIndex="0"
+                    Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                    <ComboBoxItem>normal</ComboBoxItem>
+                    <ComboBoxItem>dx.public.active.api</ComboBoxItem>
+                    <ComboBoxItem>dx.public.active.message</ComboBoxItem>
+                    <ComboBoxItem>dx.public.hide.dll</ComboBoxItem>
+                    <ComboBoxItem>dx.public.graphic.protect</ComboBoxItem>
+                    <ComboBoxItem>dx.public.anti.api</ComboBoxItem>
+                    <ComboBoxItem>dx.public.prevent.block</ComboBoxItem>
+                    <ComboBoxItem>dx.public.inject.super</ComboBoxItem>
+                </ComboBox>
+                <ComboBox
+                    x:Name="BindMode"
+                    Width="100"
+                    Margin="20,15"
+                    materialDesign:ColorZoneAssist.Mode="Inverted"
+                    materialDesign:HintAssist.FloatingOffset="0, -18"
+                    materialDesign:HintAssist.FloatingScale="0.8"
+                    materialDesign:HintAssist.Hint="绑定模式"
+                    materialDesign:TextFieldAssist.HasClearButton="False"
+                    materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource SecondaryAccentBrush}"
+                    SelectedIndex="0"
+                    Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                    <ComboBoxItem>0</ComboBoxItem>
+                    <ComboBoxItem>2</ComboBoxItem>
+                    <ComboBoxItem>101</ComboBoxItem>
+                    <ComboBoxItem>103</ComboBoxItem>
+                    <ComboBoxItem>11</ComboBoxItem>
+                    <ComboBoxItem>13</ComboBoxItem>
+                </ComboBox>
+                <Button
+                    x:Name="Ok"
+                    Width="100"
+                    Margin="20,20"
+                    Click="Ok_Click"
+                    Style="{DynamicResource MaterialDesignRaisedButton}">
+                    确定
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
