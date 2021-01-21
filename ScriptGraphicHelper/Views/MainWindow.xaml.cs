@@ -31,7 +31,7 @@ namespace ScriptGraphicHelper.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-         
+
             var paletteHelper = new PaletteHelper();
             ITheme theme = paletteHelper.GetTheme();
             theme.SetBaseTheme(Theme.Dark);
@@ -41,7 +41,7 @@ namespace ScriptGraphicHelper.Views
 
             try
             {
-                StreamReader sr = File.OpenText(CurrentDirectory + "\\setting.json");
+                StreamReader sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + "setting.json");
                 string configStr = sr.ReadToEnd();
                 sr.Close();
                 Setting setting = JsonConvert.DeserializeObject<Setting>(configStr);
@@ -90,7 +90,7 @@ namespace ScriptGraphicHelper.Views
             Setting setting;
             try
             {
-                StreamReader sr = File.OpenText(CurrentDirectory + "\\setting.json");
+                StreamReader sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + "setting.json");
                 string configStr = sr.ReadToEnd();
                 sr.Close();
                 setting = JsonConvert.DeserializeObject<Setting>(configStr);
@@ -112,7 +112,7 @@ namespace ScriptGraphicHelper.Views
             setting.LastIsAddRange = CreateColorStrHelper.IsAddRange;
             setting.LastDMRegCode = Dmsoft.RegCode;
             string settingStr = JsonConvert.SerializeObject(setting, Formatting.Indented);
-            File.WriteAllText(CurrentDirectory + "\\setting.json", settingStr);
+            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "setting.json", settingStr);
         }
 
         private void CopyPoint_Click(object sender, RoutedEventArgs e)
@@ -121,7 +121,7 @@ namespace ScriptGraphicHelper.Views
             {
                 IList<ColorInfo> colorInfos = (IList<ColorInfo>)Color_Info.ItemsSource;
                 ColorInfo colorInfo = colorInfos[Color_Info.SelectedIndex];
-                Clipboard.SetText(colorInfo.PointStr);
+                Clipboard.SetDataObject(colorInfo.PointStr);
             }
         }
 
@@ -131,7 +131,7 @@ namespace ScriptGraphicHelper.Views
             {
                 IList<ColorInfo> colorInfos = (IList<ColorInfo>)Color_Info.ItemsSource;
                 ColorInfo colorInfo = colorInfos[Color_Info.SelectedIndex];
-                Clipboard.SetText(colorInfo.ColorStr);
+                Clipboard.SetDataObject(colorInfo.ColorStr);
             }
         }
 
@@ -171,6 +171,10 @@ namespace ScriptGraphicHelper.Views
                     SetCursorPos((int)point.X + 1, (int)point.Y);
                     e.Handled = true;
                 }
+                else if (key == Key.Space)
+                {
+                    e.Handled = true;
+                }
             }
             if (key == Key.F3)
             {
@@ -205,6 +209,15 @@ namespace ScriptGraphicHelper.Views
             {
                 Panel_5.Visibility = Visibility.Hidden;
                 showTimer.Stop();
+            }
+        }
+
+        private void _Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            Key key = e.Key;
+            if (key == Key.Space)
+            {
+                e.Handled = true;
             }
         }
     }

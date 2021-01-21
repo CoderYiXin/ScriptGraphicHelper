@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using static System.Environment;
@@ -22,16 +20,20 @@ namespace ScriptGraphicHelper.Models
             return result == "Running";
         }
         public override void Dispose() { }
-        public override List<KeyValuePair<int, string>> ListAll()
+        public override async Task<List<KeyValuePair<int, string>>> ListAll()
         {
-            string[] resultArray = PipeCmd("listvms").Trim("\r\n".ToCharArray()).Split("\r\n".ToCharArray());
-            List<KeyValuePair<int, string>> result = new List<KeyValuePair<int, string>>();
-            for (int i = 0; i < resultArray.Length; i++)
+            var task = Task.Run(() =>
             {
-                string[] LineArray = resultArray[i].Split(',');
-                result.Add(new KeyValuePair<int, string>(key: int.Parse(LineArray[0].Trim()), value: LineArray[1]));
-            }
-            return result;
+                string[] resultArray = PipeCmd("listvms").Trim("\r\n".ToCharArray()).Split("\r\n".ToCharArray());
+                List<KeyValuePair<int, string>> result = new List<KeyValuePair<int, string>>();
+                for (int i = 0; i < resultArray.Length; i++)
+                {
+                    string[] LineArray = resultArray[i].Split(',');
+                    result.Add(new KeyValuePair<int, string>(key: int.Parse(LineArray[0].Trim()), value: LineArray[1]));
+                }
+                return result;
+            });
+            return await task;
         }
         public override async Task<Bitmap> ScreenShot(int Index)
         {
@@ -78,7 +80,7 @@ namespace ScriptGraphicHelper.Models
                 path = GetInkTargetPath(@"C:\ProgramData\Microsoft\Windows\Start Menu", "逍遥模拟器.lnk");
                 if (path == string.Empty)
                 {
-                    path = GetInkTargetPath(CurrentDirectory, "逍遥模拟器.lnk");
+                    path = GetInkTargetPath(AppDomain.CurrentDomain.BaseDirectory, "逍遥模拟器.lnk");
                 }
             }
             if (path != string.Empty)

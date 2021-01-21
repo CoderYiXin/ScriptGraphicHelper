@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
-using static System.Environment;
 
 namespace ScriptGraphicHelper.Models
 {
@@ -24,7 +23,7 @@ namespace ScriptGraphicHelper.Models
                 8 => DiyFindStr(colorInfos, rect),
                 9 => DiyCompareStr(colorInfos),
                 10 => AnchorsCompareStr(colorInfos),
-                11 => AnchorsCompareStr(colorInfos),
+                11 => AnchorsFindStr(colorInfos),
                 12 => AnchorsCompareStrTest(colorInfos),
                 13 => AnchorsCompareStrTest(colorInfos),
                 _ => CompareStr(colorInfos),
@@ -32,7 +31,7 @@ namespace ScriptGraphicHelper.Models
         }
         public static DiyFormat GetDiyFormat()
         {
-            StreamReader sr = File.OpenText(CurrentDirectory + "\\diyFormat.json");
+            StreamReader sr = File.OpenText(System.AppDomain.CurrentDomain.BaseDirectory + "diyFormat.json");
             string result = sr.ReadToEnd();
             sr.Close();
             return JsonConvert.DeserializeObject<DiyFormat>(result);
@@ -493,6 +492,36 @@ namespace ScriptGraphicHelper.Models
         }
 
         public static string AnchorsCompareStr(ObservableCollection<ColorInfo> colorInfos)
+        {
+            string result = "[" + colorInfos[0].Width.ToString() + "," + colorInfos[0].Height.ToString() + ",\r\n[";
+            foreach (ColorInfo colorInfo in colorInfos)
+            {
+                if (colorInfo.IsChecked)
+                {
+                    if (colorInfo.Anchors == "L")
+                        result += "[left,";
+                    else if (colorInfo.Anchors == "C")
+                        result += "[center,";
+                    else if (colorInfo.Anchors == "R")
+                        result += "[right,";
+
+                    if (colorInfo.OffsetColor == "000000")
+                    {
+                        result += colorInfo.ThePoint.X.ToString() + "," + colorInfo.ThePoint.Y.ToString() + ",0x" + colorInfo.TheColor.R.ToString("x2") +
+                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "],\r\n";
+                    }
+                    else
+                    {
+                        result += colorInfo.ThePoint.X.ToString() + "," + colorInfo.ThePoint.Y.ToString() + ",0x" + colorInfo.TheColor.R.ToString("x2") +
+                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + ",0x" + colorInfo.OffsetColor + "],\r\n";
+                    }
+                }
+            }
+            result = result.Trim(",\r\n".ToCharArray());
+            result += "]\r\n]";
+            return result;
+        }
+        public static string AnchorsFindStr(ObservableCollection<ColorInfo> colorInfos)
         {
             string result = "[" + colorInfos[0].Width.ToString() + "," + colorInfos[0].Height.ToString() + ",\r\n[";
             foreach (ColorInfo colorInfo in colorInfos)

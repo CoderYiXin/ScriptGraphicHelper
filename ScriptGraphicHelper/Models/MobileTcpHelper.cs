@@ -49,9 +49,8 @@ namespace ScriptGraphicHelper.Models
         {
             return true;
         }
-        public override List<KeyValuePair<int, string>> ListAll()
+        public override async Task<List<KeyValuePair<int, string>>> ListAll()
         {
-            List<KeyValuePair<int, string>> result = new List<KeyValuePair<int, string>>();
             string address = string.Empty;
             int port = -1;
             TcpConfig tcpConfig = new TcpConfig();
@@ -61,35 +60,41 @@ namespace ScriptGraphicHelper.Models
                 address = tcpConfig.MyAddress;
                 port = tcpConfig.MyPort;
             }
-            if (address != string.Empty && port != -1)
+            var task = Task.Run(() =>
             {
-                try
+                List<KeyValuePair<int, string>> result = new List<KeyValuePair<int, string>>();
+                
+                if (address != string.Empty && port != -1)
                 {
-                    MyTcpClient = new TcpClient(address, port);
-                    networkStream = MyTcpClient.GetStream();
-                    byte[] buf = new byte[256];
-                    for (int i = 0; i < 40; i++)
+                    try
                     {
-                        Task.Delay(100).Wait();
-                        if (networkStream.DataAvailable)
+                        MyTcpClient = new TcpClient(address, port);
+                        networkStream = MyTcpClient.GetStream();
+                        byte[] buf = new byte[256];
+                        for (int i = 0; i < 40; i++)
                         {
-                            int length = networkStream.Read(buf, 0, 256);
-                            string[] info = Encoding.UTF8.GetString(buf, 0, length).Split('|');
-                            Width = int.Parse(info[1]);
-                            Height = int.Parse(info[2]);
-                            result.Add(new KeyValuePair<int, string>(key: 0, value: info[0]));
-                            IsInit = true;
-                            return result;
+                            Task.Delay(100).Wait();
+                            if (networkStream.DataAvailable)
+                            {
+                                int length = networkStream.Read(buf, 0, 256);
+                                string[] info = Encoding.UTF8.GetString(buf, 0, length).Split('|');
+                                Width = int.Parse(info[1]);
+                                Height = int.Parse(info[2]);
+                                result.Add(new KeyValuePair<int, string>(key: 0, value: info[0]));
+                                IsInit = true;
+                                return result;
+                            }
                         }
                     }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message);
+                    }
                 }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message);
-                }
-            }
-            result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
-            return result;
+                result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
+                return result;
+            });
+            return await task;
         }
 
         private bool GetTcpState()

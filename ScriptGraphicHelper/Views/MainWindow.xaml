@@ -6,12 +6,13 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     Name="_Window"
-    Title="综合图色助手 V1.1.5"
+    Title="综合图色助手 V1.1.6"
     Width="1760"
     Height="990"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Background="{DynamicResource MaterialDesignPaper}"
     Closed="Window_Closed"
+    Cursor="{Binding WindowCursor, Mode=TwoWay}"
     FontFamily="{materialDesign:MaterialDesignFont}"
     Loaded="Window_Loaded"
     PreviewKeyDown="Window_PreviewKeyDown"
@@ -20,16 +21,25 @@
     TextElement.FontWeight="Normal"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}">
     <Window.InputBindings>
-        <KeyBinding
-            Key="F1"
-            Command="{Binding ClearData_Click}"
-            Gesture="F1" />
+        <KeyBinding Key="F1" Command="{Binding ClearData_Click}" />
         <KeyBinding
             Key="F2"
             Command="{Binding ConfigSet_Click}"
-            CommandParameter="{Binding ElementName=_Window}"
-            Gesture="F2" />
+            CommandParameter="{Binding ElementName=_Window}" />
+        <KeyBinding
+            Key="A"
+            Command="{Binding Key_AddColorInfo}"
+            CommandParameter="A" />
+        <KeyBinding
+            Key="S"
+            Command="{Binding Key_AddColorInfo}"
+            CommandParameter="S" />
+        <KeyBinding
+            Key="D"
+            Command="{Binding Key_AddColorInfo}"
+            CommandParameter="D" />
     </Window.InputBindings>
+
     <Grid>
         <materialDesign:Snackbar
             x:Name="AboutHint"
@@ -37,7 +47,6 @@
             VerticalAlignment="Top"
             IsActive="True"
             Message="F1清空表格, F2更改配置" />
-        <ContentControl prism:RegionManager.RegionName="ContentRegion" />
         <Grid
             x:Name="Panel_1"
             Width="auto"
@@ -84,7 +93,6 @@
                         Width="120"
                         Margin="20,10"
                         Command="{Binding ScreenShot_Click}"
-                        CommandParameter="{Binding ElementName=_Window}"
                         Cursor="Hand"
                         Style="{DynamicResource MaterialDesignRaisedButton}">
                         截图
@@ -193,6 +201,14 @@
                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                         Text="{Binding Range, Mode=TwoWay}" />
                     <Button
+                        x:Name="CutImg"
+                        Width="120"
+                        Margin="20,10"
+                        Command="{Binding CutBmp_Click}"
+                        Style="{DynamicResource MaterialDesignRaisedButton}">
+                        裁图
+                    </Button>
+                    <Button
                         x:Name="Create"
                         Width="120"
                         Margin="20,10"
@@ -203,7 +219,7 @@
                     <TextBox
                         x:Name="ColorString"
                         Width="120"
-                        Height="175"
+                        Height="150"
                         Margin="20,10"
                         Padding="0"
                         materialDesign:HintAssist.FloatingOffset="0, -18"
@@ -405,8 +421,8 @@
         </StackPanel>
         <Rectangle
             x:Name="SelectRectangle"
-            Width="{Binding SelectRectangleWidth}"
-            Height="{Binding SelectRectangleHeight}"
+            Width="{Binding SelectRectangleWidth, Mode=TwoWay}"
+            Height="{Binding SelectRectangleHeight, Mode=TwoWay}"
             Margin="{Binding SelectRectangleMargin, Mode=TwoWay}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"

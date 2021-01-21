@@ -1,0 +1,126 @@
+﻿<Window
+    x:Class="ScriptGraphicHelper.Views.BmpEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:prism="http://prismlibrary.com/"
+    x:Name="_BmpEditor"
+    Title="图像编辑"
+    MinWidth="650"
+    MinHeight="390"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{materialDesign:MaterialDesignFont}"
+    Loaded="Window_Loaded"
+    TextElement.FontSize="14"
+    TextElement.FontWeight="Normal"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+    <Grid>
+        <StackPanel
+            Width="Auto"
+            Height="Auto"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top">
+            <Button
+                x:Name="Cut"
+                Width="120"
+                Margin="20,30,20,10"
+                Command="{Binding Cut_Click}">
+                裁剪/覆盖
+            </Button>
+            <Button
+                x:Name="Save"
+                Width="120"
+                Margin="20,10"
+                Command="{Binding Save_Click}">
+                保存
+            </Button>
+            <Button
+                x:Name="Reset"
+                Width="120"
+                Margin="20,10"
+                Command="{Binding Reset_Click}">
+                重置
+            </Button>
+            <StackPanel
+                Margin="20,10"
+                Orientation="Horizontal"
+                ToolTip="选择的颜色">
+                <materialDesign:PackIcon
+                    Width="28"
+                    Height="28"
+                    Foreground="{Binding SelectColor}"
+                    Kind="Palette" />
+                <TextBox
+                    x:Name="SelectColor"
+                    Width="80"
+                    Margin="10,0,0,0"
+                    VerticalContentAlignment="Bottom"
+                    IsReadOnly="False"
+                    Text="{Binding SelectColor, Mode=TwoWay}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="TextChanged">
+                            <i:InvokeCommandAction Command="{Binding TB_TextChanged}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </TextBox>
+            </StackPanel>
+            <StackPanel
+                Margin="20,10"
+                Orientation="Horizontal"
+                ToolTip="覆盖的颜色">
+                <materialDesign:PackIcon
+                    Width="28"
+                    Height="28"
+                    Foreground="{Binding FillColor}"
+                    Kind="Palette" />
+                <TextBox
+                    x:Name="FillColor"
+                    Width="80"
+                    Margin="10,0,0,0"
+                    VerticalContentAlignment="Bottom"
+                    IsReadOnly="False"
+                    Text="{Binding FillColor, Mode=TwoWay}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="TextChanged">
+                            <i:InvokeCommandAction Command="{Binding TB_TextChanged}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </TextBox>
+            </StackPanel>
+            <Slider
+                Width="130"
+                Margin="10,0"
+                Maximum="100"
+                Minimum="0"
+                Style="{StaticResource MaterialDesignDiscreteSlider}"
+                ToolTip="容差范围"
+                Value="{Binding Tolerance, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="ValueChanged">
+                        <i:InvokeCommandAction Command="{Binding TB_TextChanged}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Slider>
+        </StackPanel>
+
+        <Image
+            x:Name="Img"
+            Width="{Binding ImgWidth, Mode=TwoWay}"
+            Height="{Binding ImgHeight, Mode=TwoWay}"
+            Margin="170,30,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Focusable="True"
+            SizeChanged="Img_SizeChanged"
+            Source="{Binding ImgSource, Mode=TwoWay}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeftButtonUp">
+                    <i:InvokeCommandAction Command="{Binding Img_MouseLeftButtonUp}" CommandParameter="{Binding ElementName=Img}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Image>
+
+    </Grid>
+</Window>

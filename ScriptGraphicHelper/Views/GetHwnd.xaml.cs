@@ -33,15 +33,15 @@ namespace ScriptGraphicHelper.Views
         ObservableCollection<MovieCategory> MovieCategories = new ObservableCollection<MovieCategory>();
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists(CurrentDirectory + @"/Resources/selectHwd.cur"))
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"Resources/selectHwd.cur"))
             {
-                if (!Directory.Exists(CurrentDirectory + @"/Resources"))
+                if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + @"Resources"))
                 {
-                    Directory.CreateDirectory(CurrentDirectory + @"/Resources");
+                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + @"Resources");
                 }
                 var data = (byte[])Properties.Resources.ResourceManager.GetObject("selectHwd");
                 var stream = new MemoryStream(data);
-                var fileStream = File.Create(CurrentDirectory + @"/Resources/selectHwd.cur");
+                var fileStream = File.Create(AppDomain.CurrentDomain.BaseDirectory + @"Resources/selectHwd.cur");
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.CopyTo(fileStream);
                 stream.Close();
@@ -109,7 +109,7 @@ namespace ScriptGraphicHelper.Views
 
         private void Button_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            IntPtr cur = NativeMethods.LoadCursorFromFile(CurrentDirectory + @"/Resources/selectHwd.cur");
+            IntPtr cur = NativeMethods.LoadCursorFromFile(AppDomain.CurrentDomain.BaseDirectory + @"Resources/selectHwd.cur");
             NativeMethods.SetSystemCursor(cur, NativeMethods.OCR_NORMAL);
         }
 

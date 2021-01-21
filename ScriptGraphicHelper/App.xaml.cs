@@ -12,6 +12,7 @@ namespace ScriptGraphicHelper
     {
         protected override Window CreateShell()
         {
+            
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             return Container.Resolve<MainWindow>();

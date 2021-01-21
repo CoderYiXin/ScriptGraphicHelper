@@ -11,7 +11,7 @@ namespace ScriptGraphicHelper.Models
         public abstract string Path { get; set; }
         public abstract string Name { get; set; }
         public abstract bool IsStart(int Index);
-        public abstract List<KeyValuePair<int, string>> ListAll();
+        public abstract Task<List<KeyValuePair<int, string>>> ListAll();
         public abstract Task<Bitmap> ScreenShot(int Index);
         public abstract void Dispose();
     }

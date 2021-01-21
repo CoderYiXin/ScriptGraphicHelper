@@ -16,7 +16,6 @@ namespace ScriptGraphicHelper.Models
             public override string Path { get; set; } = "句柄";
             public override string Name { get; set; } = "句柄";
 
-
             private Dmsoft DM;
             private int Hwd = -1;
             private bool IsInit = false;
@@ -24,7 +23,10 @@ namespace ScriptGraphicHelper.Models
             {
                 try
                 {
-                    DM.UnBindWindow();
+                    if (IsInit)
+                    {
+                        DM.UnBindWindow();
+                    }
                 }
                 catch { }
             }
@@ -61,26 +63,31 @@ namespace ScriptGraphicHelper.Models
                 });
                 return await task;
             }
-            public override List<KeyValuePair<int, string>> ListAll()
+            public override async Task<List<KeyValuePair<int, string>>> ListAll()
             {
                 DM = new Dmsoft();
-                List<KeyValuePair<int, string>> result = new List<KeyValuePair<int, string>>();
-                if (!DM.IsInit)
-                {
-                    result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
-                    return result;
-                }
-                string[] graphicModes = new string[] { "normal", "gdi", "gdi2", "dx2", "dx3", "dx.graphic.2d", "dx.graphic.2d.2", "dx.graphic.3d", "dx.graphic.3d.8", "dx.graphic.opengl", "dx.graphic.opengl.esv2", "dx.graphic.3d.10plus" };
-                string[] attributes = new string[] { "", " dx.public.active.api", "dx.public.active.message", "dx.public.hide.dll", "dx.public.graphic.protect", "dx.public.anti.api", "dx.public.prevent.block", "dx.public.inject.super" };
-                int[] modes = new int[] { 0, 2, 101, 103, 11, 13 };
-
                 GetHwnd getHwnd = new GetHwnd();
-
+                int graphicMode = -1;
+                int attribute = -1;
                 if ((bool)getHwnd.ShowDialog())
                 {
                     Hwd = getHwnd.ResultHwnd;
-                    int graphicMode = getHwnd.ResultGraphicMode;
-                    int attribute = getHwnd.ResultAttribute;
+                    graphicMode = getHwnd.ResultGraphicMode;
+                    attribute = getHwnd.ResultAttribute;
+                }
+                var task = Task.Run(() =>
+                {
+                    List<KeyValuePair<int, string>> result = new List<KeyValuePair<int, string>>();
+                    if (!DM.IsInit||graphicMode == -1 || attribute == -1)
+                    {
+                        result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
+                        return result;
+                    }
+                    string[] graphicModes = new string[] { "normal", "gdi", "gdi2", "dx2", "dx3", "dx.graphic.2d", "dx.graphic.2d.2", "dx.graphic.3d", "dx.graphic.3d.8", "dx.graphic.opengl", "dx.graphic.opengl.esv2", "dx.graphic.3d.10plus" };
+                    string[] attributes = new string[] { "", "dx.public.active.api", "dx.public.active.message", "dx.public.hide.dll", "dx.public.graphic.protect", "dx.public.anti.api", "dx.public.prevent.block", "dx.public.inject.super" };
+                    int[] modes = new int[] { 0, 2, 101, 103, 11, 13 };
+
+
                     int mode = getHwnd.ResultMode;
                     if (DM.BindWindowEx(Hwd, graphicModes[graphicMode], "normal", "normal", attributes[attribute], modes[mode]) == 1)
                     {
@@ -88,10 +95,11 @@ namespace ScriptGraphicHelper.Models
                         result.Add(new KeyValuePair<int, string>(key: 0, value: Hwd.ToString() + "-" + graphicModes[graphicMode]));
                         return result;
                     }
-                }
 
-                result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
-                return result;
+                    result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
+                    return result;
+                });
+                return await task;
             }
 
             public override bool IsStart(int Index)

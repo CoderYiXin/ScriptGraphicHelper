@@ -12,6 +12,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -88,6 +89,13 @@ namespace ScriptGraphicHelper.ViewModels
         {
             get { return _loupeVisibility; }
             set { SetProperty(ref _loupeVisibility, value); }
+        }
+
+        private Cursor _windowCursor;
+        public Cursor WindowCursor
+        {
+            get { return _windowCursor; }
+            set { SetProperty(ref _windowCursor, value); }
         }
 
         private double _pointX;
@@ -190,7 +198,7 @@ namespace ScriptGraphicHelper.ViewModels
             set { SetProperty(ref _colorInfoSelect, value); }
         }
 
-        public IEnumerable<string> AnchorsValue => new[] { "L", "C", "R" };
+        public static IEnumerable<string> AnchorsValue => new[] { "L", "C", "R" };
 
         public MainWindowViewModel()
         {
@@ -208,20 +216,7 @@ namespace ScriptGraphicHelper.ViewModels
                  {
                      if (CreateStr == string.Empty)
                      {
-                         if (ColorInfos.Count == 0)
-                         {
-                             if (MyEmulator.IsInit == 2)
-                             {
-                                 FormatSelectedIndex = -1;
-                                 MyEmulator.Dispose();
-                                 EmulatorInfo.Clear();
-                                 EmulatorInfo = MyEmulator.Init();
-                             }
-                         }
-                         else
-                         {
-                             ColorInfos.Clear();
-                         }
+                         ColorInfos.Clear();
                      }
                      else
                      {
@@ -248,7 +243,7 @@ namespace ScriptGraphicHelper.ViewModels
                 EmulatorInfo = MyEmulator.Init();
             }
         });
-        public ICommand Emulator_SelectionChanged => new DelegateCommand<MainWindow>((e) =>
+        public ICommand Emulator_SelectionChanged => new DelegateCommand<MainWindow>(async (e) =>
                  {
                      if (MyEmulator.IsInit == 2)
                      {
@@ -273,14 +268,11 @@ namespace ScriptGraphicHelper.ViewModels
                              }
                          }
 
-                         e.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                         {
-                             e.Cursor = Cursors.Wait;
-                             MyEmulator.Changed(e.EmulatorOptions.SelectedIndex);
-                             EmulatorInfo = MyEmulator.GetAll();
-                             e.EmulatorOptions.SelectedIndex = -1;
-                             e.Cursor = Cursors.Arrow;
-                         }));
+                         WindowCursor = Cursors.Wait;
+                         MyEmulator.Changed(e.EmulatorOptions.SelectedIndex);
+                         EmulatorInfo = await MyEmulator.GetAll();
+                         e.EmulatorOptions.SelectedIndex = -1;
+                         WindowCursor = Cursors.Arrow;
 
                      }
                      else if (MyEmulator.IsInit == 1)
@@ -289,14 +281,24 @@ namespace ScriptGraphicHelper.ViewModels
                      }
 
                  });
-        public ICommand ScreenShot_Click => new DelegateCommand<MainWindow>(async (e) =>
+
+        public ICommand CutBmp_Click => new DelegateCommand(async () =>
         {
-            e.ScreenShot.Cursor = Cursors.Wait;
-            e.Cursor = Cursors.Wait;
+            if (Bmp is null)
+            {
+                return;
+            }
+            Range range = GetRange();
+            Bitmap bmp = await GraphicHelper.GetBmp(range);
+            new BmpEditor(bmp).ShowDialog();
+        });
+        public ICommand ScreenShot_Click => new DelegateCommand(async () =>
+        {
+            WindowCursor = Cursors.Wait;
             if (MyEmulator.Select == -1 || MyEmulator.Index == -1)
             {
                 MessageBox.Show("请先配置 -> (模拟器/tcp/句柄)");
-                e.Cursor = Cursors.Arrow;
+                WindowCursor = Cursors.Arrow;
                 return;
             }
             Bitmap bmp = await MyEmulator.ScreenShot();
@@ -308,27 +310,26 @@ namespace ScriptGraphicHelper.ViewModels
                 ImgSource = Bitmap2BitmapImage(Bmp);
                 GraphicHelper.KeepScreen(Bmp);
             }
-            e.ScreenShot.Cursor = Cursors.Arrow;
-            e.Cursor = Cursors.Arrow;
+            WindowCursor = Cursors.Arrow;
         });
         public ICommand Save_Click => new DelegateCommand(() =>
-                 {
-                     if (Bmp != null)
-                     {
-                         SaveFileDialog saveFileDialog = new SaveFileDialog
-                         {
-                             FileName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png",
-                             Filter = "png files   (*.png)|*.png",
-                             FilterIndex = 2,
-                             RestoreDirectory = true
-                         };
-                         if (saveFileDialog.ShowDialog() == true)
-                         {
-                             string savefire = saveFileDialog.FileName.ToString();
-                             Bmp.Save(savefire);
-                         }
-                     }
-                 });
+        {
+            if (Bmp != null)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    FileName = "screen_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".png",
+                    Filter = "png files   (*.png)|*.png|bmp files   (*.bmp)|*.bmp",
+                    FilterIndex = 0,
+                    RestoreDirectory = false
+                };
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    string savefire = saveFileDialog.FileName.ToString();
+                    Bmp.Save(savefire);
+                }
+            }
+        });
         public ICommand TurnRight_Click => new DelegateCommand(() =>
                  {
                      if (Bmp != null)
@@ -359,10 +360,11 @@ namespace ScriptGraphicHelper.ViewModels
                          }
                          else if (FormatSelectedIndex == 11)
                          {
+                             Range rect = GetRange();
                              double width = ColorInfos[0].Width;
                              double height = ColorInfos[1].Height;
                              string str = CreateColorStrHelper.Create(13, ColorInfos);
-                             System.Drawing.Point result = GraphicHelper.AnchorsFindColor(width, height, str.Trim('"'), sim[SimSelectedIndex]);
+                             System.Drawing.Point result = GraphicHelper.AnchorsFindColor(rect, width, height, str.Trim('"'), sim[SimSelectedIndex]);
                              if (result.X >= 0 && result.Y >= 0)
                              {
                                  Point point = e.Img.TranslatePoint(new Point(result.X, result.Y), e);
@@ -401,9 +403,9 @@ namespace ScriptGraphicHelper.ViewModels
                          Range rect = GetRange();
                          if (Range != null)
                          {
-                             if (Range.IndexOf("m") != -1)
+                             if (Range.IndexOf("[") != -1)
                              {
-                                 Range = "m," + rect.Left.ToString() + "," + rect.Top.ToString() + "," + rect.Right.ToString() + "," + rect.Bottom.ToString();
+                                 Range = "[" + rect.Left.ToString() + "," + rect.Top.ToString() + "," + rect.Right.ToString() + "," + rect.Bottom.ToString() + "]";
                              }
                              else
                              {
@@ -439,11 +441,16 @@ namespace ScriptGraphicHelper.ViewModels
         {
             if (Range != null)
             {
-                if (Range.IndexOf("m") != -1)
+                if (Range.IndexOf("[") != -1)
                 {
-                    string[] range = Range.Split(',');
-                    return new Range(int.Parse(range[1].Trim()), int.Parse(range[2].Trim()), int.Parse(range[3].Trim()), int.Parse(range[4].Trim()));
+                    string[] range = Range.TrimStart('[').TrimEnd(']').Split(',');
+
+                    return new Range(int.Parse(range[0].Trim()), int.Parse(range[1].Trim()), int.Parse(range[2].Trim()), int.Parse(range[3].Trim()));
                 }
+            }
+            if (ColorInfos.Count == 0)
+            {
+                return new Range(0, 0, ImgWidth, ImgHeight);
             }
             double imgWidth = ImgWidth - 1;
             double imgHeight = ImgHeight - 1;
@@ -538,12 +545,43 @@ namespace ScriptGraphicHelper.ViewModels
             }
             LoupeWriteBmp.WriteColor(colors);
         });
+
+        public ICommand Key_AddColorInfo => new DelegateCommand<string>((key) =>
+        {
+            if (LoupeVisibility == Visibility.Visible)
+            {
+                byte[] bytes = GraphicHelper.GetPixel((int)PointX, (int)PointY);
+                Color color = Color.FromArgb(255, bytes[0], bytes[1], bytes[2]);
+                if (FormatSelectedIndex != 10 && FormatSelectedIndex != 11)
+                {
+                    if (key == "A")
+                    {
+                        ColorInfos.Add(new ColorInfo(ColorInfos.Count, new Point(PointX, PointY), color));
+                    }
+                }
+                else
+                {
+                    string anchors = string.Empty;
+                    double _ = ImgWidth / 4;
+
+                    if (key == "A")
+                        anchors = "L";
+                    else if (key == "S")
+                        anchors = "C";
+                    else if (key == "D")
+                        anchors = "R";
+
+                    ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchors, new Point(PointX, PointY), color, ImgWidth, ImgHeight));
+
+                }
+            }
+        });
         public ICommand Img_MouseLeftButtonUp => new DelegateCommand<System.Windows.Controls.Image>((e) =>
         {
             e.ReleaseMouseCapture();
             if (SelectRectangleVisibility == Visibility.Visible && EndPoint.X >= StartPoint.X + 20 && EndPoint.Y >= StartPoint.Y + 20)
             {
-                Range = "m," + Math.Floor(StartPoint.X).ToString() + "," + Math.Floor(StartPoint.Y).ToString() + "," + Math.Floor(EndPoint.X).ToString() + "," + Math.Floor(EndPoint.Y).ToString();
+                Range = string.Format("[{0},{1},{2},{3}]", Math.Floor(StartPoint.X).ToString(), Math.Floor(StartPoint.Y).ToString(), Math.Floor(EndPoint.X).ToString(), Math.Floor(EndPoint.Y).ToString());
                 SelectRectangleVisibility = Visibility.Collapsed;
                 LoupeVisibility = Visibility.Visible;
                 return;
@@ -587,27 +625,27 @@ namespace ScriptGraphicHelper.ViewModels
             LoupeVisibility = Visibility.Collapsed;
         });
         public ICommand Open_Click => new DelegateCommand(() =>
-                 {
-                     OpenFileDialog fileDialog = new OpenFileDialog
-                     {
-                         RestoreDirectory = true,
-                         Multiselect = false,
-                         Title = "请选择文件",
-                         Filter = "位图文件 |*.jpg;*.png;*.bmp"
-                     };
-                     if (fileDialog.ShowDialog() == true)
-                     {
-                         string FileName = fileDialog.FileName;
-                         FileStream fileStream = new FileStream(FileName, FileMode.Open, FileAccess.Read);
-                         Bmp = (Bitmap)Image.FromStream(fileStream);
-                         ImgHeight = Bmp.Height;
-                         ImgWidth = Bmp.Width;
-                         ImgSource = Bitmap2BitmapImage(Bmp);
-                         fileStream.Close();
-                         fileStream.Dispose();
-                         GraphicHelper.KeepScreen(Bmp);
-                     }
-                 });
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog
+            {
+                RestoreDirectory = true,
+                Multiselect = false,
+                Title = "请选择文件",
+                Filter = "位图文件 |*.jpg;*.png;*.bmp"
+            };
+            if (fileDialog.ShowDialog() == true)
+            {
+                string FileName = fileDialog.FileName;
+                FileStream fileStream = new FileStream(FileName, FileMode.Open, FileAccess.Read);
+                Bmp = (Bitmap)Image.FromStream(fileStream);
+                ImgHeight = Bmp.Height;
+                ImgWidth = Bmp.Width;
+                ImgSource = Bitmap2BitmapImage(Bmp);
+                fileStream.Close();
+                fileStream.Dispose();
+                GraphicHelper.KeepScreen(Bmp);
+            }
+        });
         public ICommand AddOffset_Click => new DelegateCommand(() =>
         {
             if (ColorInfos.Count > 0)
@@ -728,7 +766,7 @@ namespace ScriptGraphicHelper.ViewModels
             Setting setting;
             try
             {
-                StreamReader sr = File.OpenText(CurrentDirectory + "\\setting.json");
+                StreamReader sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + "setting.json");
                 string configStr = sr.ReadToEnd();
                 sr.Close();
                 setting = JsonConvert.DeserializeObject<Setting>(configStr);
@@ -751,7 +789,7 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     setting.LastSize = result.LastSize;
                     string settingStr = JsonConvert.SerializeObject(setting, Formatting.Indented);
-                    File.WriteAllText(CurrentDirectory + "\\setting.json", settingStr);
+                    File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "setting.json", settingStr);
                 }
                 if (result.LastOffsetColorShow != (e.OffsetList.Visibility == Visibility.Visible))
                 {
@@ -769,6 +807,7 @@ namespace ScriptGraphicHelper.ViewModels
                 Dmsoft.RegCode = result.LastDMRegCode;
             }
         });
+
         public void AllOffsetChanged(string offsetStr)
         {
             for (int i = 0; i < ColorInfos.Count; i++)
@@ -800,7 +839,7 @@ namespace ScriptGraphicHelper.ViewModels
         }
 
         [DllImport("gdi32.dll")]
-        public static extern bool DeleteObject(IntPtr hObject);
+        private static extern bool DeleteObject(IntPtr hObject);
         private ImageSource Bitmap2BitmapImage(Bitmap bitmap)
         {
             IntPtr hBitmap = bitmap.GetHbitmap();

@@ -83,10 +83,10 @@ namespace ScriptGraphicHelper.Models
                 IsInit = -1;
             }
         }
-        public static ObservableCollection<string> GetAll()
+        public async static Task<ObservableCollection<string>> GetAll()
         {
             ObservableCollection<string> result = new ObservableCollection<string>();
-            Info = Emulators[Select].ListAll();
+            Info =await Emulators[Select].ListAll();
             foreach (var item in Info)
             {
                 result.Add(item.Value);

@@ -15,24 +15,62 @@ namespace ScriptGraphicHelper.Models
 {
     public static class GraphicHelper
     {
-        public static int Width = 0;
-        public static int Height = 0;
-        public static int FormatSize;
-        public static int Stride;
-        public static byte[] ScreenData;
+        public static int Width { get; set; } = 0;
+        public static int Height { get; set; } = 0;
+        public static int FormatSize { get; set; }
+        public static int Stride { get; set; }
+        public static byte[] ScreenData { get; set; }
 
         public static void KeepScreen(Bitmap bitmap)
         {
             Width = bitmap.Width;
             Height = bitmap.Height;
-            BitmapData Data = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
-            IntPtr IntPtr = Data.Scan0;
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+            IntPtr IntPtr = data.Scan0;
             FormatSize = Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
-            Stride = Data.Stride;
+            Stride = data.Stride;
             ScreenData = new byte[Stride * Height];
             Marshal.Copy(IntPtr, ScreenData, 0, Stride * Height);
-            bitmap.UnlockBits(Data);
+            bitmap.UnlockBits(data);
         }
+
+        public static async Task<Bitmap> GetBmp(Range range)
+        {
+            var task = Task.Run(() =>
+            {
+                int left = (int)range.Left;
+                int top = (int)range.Top;
+                int right = (int)range.Right;
+                int bottom = (int)range.Bottom;
+                int width = right - left;
+                int height = bottom - top;
+                Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+                BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+                unsafe
+                {
+                    byte* ptr = (byte*)data.Scan0;
+                    int stride = data.Stride;
+                    for (int i = top; i < bottom; i++)
+                    {
+                        int ptr_location = (i - top) * stride;
+                        int parent_location = i * Stride + left * FormatSize;
+                        for (int j = left; j < right; j++)
+                        {
+                            ptr[ptr_location] = ScreenData[parent_location];
+                            ptr[ptr_location + 1] = ScreenData[parent_location + 1];
+                            ptr[ptr_location + 2] = ScreenData[parent_location + 2];
+                            ptr[ptr_location + 3] = 255;
+                            ptr_location += 4;
+                            parent_location += FormatSize;
+                        }
+                    }
+                }
+                bitmap.UnlockBits(data);
+                return bitmap;
+            });
+            return await task;
+        }
+
         public static byte[] GetPixel(int x, int y)
         {
             byte[] retRGB = new byte[] { 0, 0, 0 };
@@ -84,7 +122,7 @@ namespace ScriptGraphicHelper.Models
             result = result.Trim(',');
             return CompareColorEx(result, sim);
         }
-        public static Point AnchorsFindColor(double width, double height, string colorString, byte sim = 95)
+        public static Point AnchorsFindColor(Range rect, double width, double height, string colorString, byte sim = 95)
         {
             string compareColorStr = colorString.Trim('"');
             string[] compareColorArr = compareColorStr.Split(',');
@@ -140,7 +178,7 @@ namespace ScriptGraphicHelper.Models
             }
             result = result.Trim(',');
             //return CompareColor(result, sim);
-            return FindMultiColor(0, 0, Width - 1, Height - 1, startColorArr[3], result, sim);
+            return FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, startColorArr[3], result, sim);
         }
         public static bool CompareColorEx(string colorString, byte sim = 95, int X = 0, int Y = 0)
         {
