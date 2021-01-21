@@ -117,11 +117,12 @@ namespace ScriptGraphicHelper.ViewModels
             bs.CopyPixels(Int32Rect.Empty, data.Scan0, data.Height * data.Stride, data.Stride);
             bmp.UnlockBits(data);
 
-            Bmp = await BmpEditorHelper.CutBmp(bmp);
-            ImgSource = Bitmap2BitmapImage(Bmp);
-            ImgWidth = Bmp.Width * 3;
-            ImgHeight = Bmp.Height * 3;
-            BmpEditorHelper.KeepScreen(Bmp);
+            Bitmap _bmp = await BmpEditorHelper.CutBmp(bmp);
+            ImgSource = Bitmap2BitmapImage(_bmp);
+            ImgWidth = _bmp.Width * 3;
+            ImgHeight = _bmp.Height * 3;
+            BmpEditorHelper.KeepScreen(_bmp);
+            Bmp = _bmp;
         });
 
         public ICommand Save_Click => new DelegateCommand(() =>

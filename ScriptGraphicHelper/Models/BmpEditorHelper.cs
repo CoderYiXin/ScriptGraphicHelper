@@ -275,7 +275,7 @@ namespace ScriptGraphicHelper.Models
                         }
                     }
                 }
-                return GetBmp(new Range(0, 0, width - 1, height - 1));
+                return GetBmp(screenData);
 
             });
             return await task;
