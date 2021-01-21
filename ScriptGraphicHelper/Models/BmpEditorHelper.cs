@@ -69,6 +69,18 @@ namespace ScriptGraphicHelper.Models
             return await task;
         }
 
+        public static void SetPixel(int x, int y, Color color)
+        {
+            if (x >= 0 && y >= 0 && x < Width && y < Height)
+            {
+                int location = x * FormatSize + y * Stride;
+                ScreenData[location + 2] = color.R;
+                ScreenData[location + 1] = color.G;
+                ScreenData[location] = color.B;
+            }
+
+        }
+
         public static byte[] GetPixel(int x, int y)
         {
             byte[] retRGB = new byte[] { 0, 0, 0 };
@@ -89,7 +101,7 @@ namespace ScriptGraphicHelper.Models
             return retRGB;
         }
 
-        internal static async Task<Bitmap> SetPixels(Color sc, Color fc, int offset)
+        public static async Task<Bitmap> SetPixels(Color sc, Color fc, int offset)
         {
             byte[] data = (byte[])ScreenData.Clone();
             byte sr = sc.R; byte sg = sc.G; byte sb = sc.B;
@@ -112,7 +124,29 @@ namespace ScriptGraphicHelper.Models
             }
             return await GetBmp(data);
         }
+        public static async Task<Bitmap> SetPixels_Reverse(Color sc, Color fc, int offset)
+        {
+            byte[] data = (byte[])ScreenData.Clone();
+            byte sr = sc.R; byte sg = sc.G; byte sb = sc.B;
+            byte fr = fc.R; byte fg = fc.G; byte fb = fc.B;
 
+            int step = 0;
+            int similarity = (int)(255 - 255 * ((100 - offset) / 100.0));
+            for (int i = 0; i < Height; i++)
+            {
+                for (int j = 0; j < Width; j++)
+                {
+                    if (Math.Abs(data[step] - sb) > similarity && Math.Abs(data[step + 1] - sg) > similarity && Math.Abs(data[step + 2] - sr) > similarity)
+                    {
+                        data[step] = fb;
+                        data[step + 1] = fg;
+                        data[step + 2] = fr;
+                    }
+                    step += FormatSize;
+                }
+            }
+            return await GetBmp(data);
+        }
         public static async Task<Bitmap> GetBmp(byte[] screenData)
         {
             var task = Task.Run(() =>

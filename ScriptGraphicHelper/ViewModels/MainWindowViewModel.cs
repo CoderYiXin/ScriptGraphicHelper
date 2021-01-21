@@ -284,7 +284,7 @@ namespace ScriptGraphicHelper.ViewModels
 
         public ICommand CutBmp_Click => new DelegateCommand(async () =>
         {
-            if (Bmp is null)
+            if (Bmp is null || Range is null || Range.IndexOf("[") == -1)
             {
                 return;
             }
@@ -484,6 +484,36 @@ namespace ScriptGraphicHelper.ViewModels
         }
         private Point StartPoint { get; set; }
         private Point EndPoint { get; set; }
+        public ICommand Key_AddColorInfo => new DelegateCommand<string>((key) =>
+        {
+            if (LoupeVisibility == Visibility.Visible)
+            {
+                byte[] bytes = GraphicHelper.GetPixel((int)PointX, (int)PointY);
+                Color color = Color.FromArgb(255, bytes[0], bytes[1], bytes[2]);
+                if (FormatSelectedIndex != 10 && FormatSelectedIndex != 11)
+                {
+                    if (key == "A")
+                    {
+                        ColorInfos.Add(new ColorInfo(ColorInfos.Count, new Point(PointX, PointY), color));
+                    }
+                }
+                else
+                {
+                    string anchors = string.Empty;
+                    double _ = ImgWidth / 4;
+
+                    if (key == "A")
+                        anchors = "L";
+                    else if (key == "S")
+                        anchors = "C";
+                    else if (key == "D")
+                        anchors = "R";
+
+                    ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchors, new Point(PointX, PointY), color, ImgWidth, ImgHeight));
+
+                }
+            }
+        });
         public ICommand Img_MouseDown => new DelegateCommand<MainWindow>((e) =>
         {
             e.Img.CaptureMouse();
@@ -545,41 +575,10 @@ namespace ScriptGraphicHelper.ViewModels
             }
             LoupeWriteBmp.WriteColor(colors);
         });
-
-        public ICommand Key_AddColorInfo => new DelegateCommand<string>((key) =>
-        {
-            if (LoupeVisibility == Visibility.Visible)
-            {
-                byte[] bytes = GraphicHelper.GetPixel((int)PointX, (int)PointY);
-                Color color = Color.FromArgb(255, bytes[0], bytes[1], bytes[2]);
-                if (FormatSelectedIndex != 10 && FormatSelectedIndex != 11)
-                {
-                    if (key == "A")
-                    {
-                        ColorInfos.Add(new ColorInfo(ColorInfos.Count, new Point(PointX, PointY), color));
-                    }
-                }
-                else
-                {
-                    string anchors = string.Empty;
-                    double _ = ImgWidth / 4;
-
-                    if (key == "A")
-                        anchors = "L";
-                    else if (key == "S")
-                        anchors = "C";
-                    else if (key == "D")
-                        anchors = "R";
-
-                    ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchors, new Point(PointX, PointY), color, ImgWidth, ImgHeight));
-
-                }
-            }
-        });
         public ICommand Img_MouseLeftButtonUp => new DelegateCommand<System.Windows.Controls.Image>((e) =>
         {
             e.ReleaseMouseCapture();
-            if (SelectRectangleVisibility == Visibility.Visible && EndPoint.X >= StartPoint.X + 20 && EndPoint.Y >= StartPoint.Y + 20)
+            if (SelectRectangleVisibility == Visibility.Visible && EndPoint.X >= StartPoint.X + 10 && EndPoint.Y >= StartPoint.Y + 10)
             {
                 Range = string.Format("[{0},{1},{2},{3}]", Math.Floor(StartPoint.X).ToString(), Math.Floor(StartPoint.Y).ToString(), Math.Floor(EndPoint.X).ToString(), Math.Floor(EndPoint.Y).ToString());
                 SelectRectangleVisibility = Visibility.Collapsed;

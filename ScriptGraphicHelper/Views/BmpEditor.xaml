@@ -8,9 +8,10 @@
     x:Name="_BmpEditor"
     Title="图像编辑"
     MinWidth="650"
-    MinHeight="390"
+    MinHeight="490"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Background="{DynamicResource MaterialDesignPaper}"
+    Cursor="{Binding Editor_Cursor}"
     FontFamily="{materialDesign:MaterialDesignFont}"
     Loaded="Window_Loaded"
     TextElement.FontSize="14"
@@ -43,6 +44,25 @@
                 Command="{Binding Reset_Click}">
                 重置
             </Button>
+            <CheckBox
+                Width="120"
+                Margin="20,10"
+                Background="#666666"
+                Command="{Binding Pen_Click}"
+                IsChecked="{Binding PenState, Mode=TwoWay}"
+                Style="{StaticResource MaterialDesignFilterChipCheckBox}">
+                笔刷
+            </CheckBox>
+            <CheckBox
+                Width="120"
+                Margin="20,10"
+                Background="#666666"
+                Command="{Binding TB_TextChanged}"
+                IsChecked="{Binding ReverseState, Mode=TwoWay}"
+                Style="{StaticResource MaterialDesignFilterChipCheckBox}">
+                反选
+            </CheckBox>
+
             <StackPanel
                 Margin="20,10"
                 Orientation="Horizontal"
@@ -116,11 +136,19 @@
             SizeChanged="Img_SizeChanged"
             Source="{Binding ImgSource, Mode=TwoWay}">
             <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeftButtonDown">
+                    <i:InvokeCommandAction Command="{Binding Img_MouseDown}" CommandParameter="{Binding ElementName=Img}" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="MouseMove">
+                    <i:InvokeCommandAction Command="{Binding Img_MouseMove}" CommandParameter="{Binding ElementName=Img}" />
+                </i:EventTrigger>
                 <i:EventTrigger EventName="MouseLeftButtonUp">
                     <i:InvokeCommandAction Command="{Binding Img_MouseLeftButtonUp}" CommandParameter="{Binding ElementName=Img}" />
                 </i:EventTrigger>
+                <i:EventTrigger EventName="MouseLeave">
+                    <i:InvokeCommandAction Command="{Binding Img_MouseLeave}" CommandParameter="{Binding ElementName=_Img}" />
+                </i:EventTrigger>
             </i:Interaction.Triggers>
         </Image>
-
     </Grid>
 </Window>

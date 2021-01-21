@@ -6,9 +6,9 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     Name="_Window"
-    Title="综合图色助手 V1.1.6"
-    Width="1760"
-    Height="990"
+    Title="综合图色助手 V1.1.7"
+    Width="1450"
+    Height="820"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Background="{DynamicResource MaterialDesignPaper}"
     Closed="Window_Closed"
@@ -68,10 +68,10 @@
                     <ComboBox
                         x:Name="EmulatorOptions"
                         Width="120"
-                        Margin="20,10"
+                        Margin="20,7"
                         materialDesign:ColorZoneAssist.Mode="Inverted"
                         materialDesign:HintAssist.FloatingOffset="0, -18"
-                        materialDesign:HintAssist.FloatingScale="0.8"
+                        materialDesign:HintAssist.FloatingScale="1"
                         materialDesign:HintAssist.Hint="{Binding EmulatorOptionsHint, Mode=TwoWay}"
                         materialDesign:TextFieldAssist.HasClearButton="False"
                         materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource AttentionToActionBrush}"
@@ -91,7 +91,7 @@
                     <Button
                         x:Name="ScreenShot"
                         Width="120"
-                        Margin="20,10"
+                        Margin="20,7"
                         Command="{Binding ScreenShot_Click}"
                         Cursor="Hand"
                         Style="{DynamicResource MaterialDesignRaisedButton}">
@@ -100,7 +100,7 @@
                     <Button
                         x:Name="Open"
                         Width="120"
-                        Margin="20,10"
+                        Margin="20,7"
                         Command="{Binding Open_Click}"
                         Style="{DynamicResource MaterialDesignRaisedButton}">
                         载入
@@ -108,7 +108,7 @@
                     <Button
                         x:Name="Save"
                         Width="120"
-                        Margin="20,10"
+                        Margin="20,7"
                         Command="{Binding Save_Click}"
                         Style="{DynamicResource MaterialDesignRaisedButton}">
                         保存
@@ -116,7 +116,7 @@
                     <Button
                         x:Name="TurnRight"
                         Width="120"
-                        Margin="20,10"
+                        Margin="20,7"
                         Command="{Binding TurnRight_Click}"
                         Style="{DynamicResource MaterialDesignRaisedButton}">
                         右转
@@ -124,86 +124,111 @@
                     <Button
                         x:Name="Test"
                         Width="120"
-                        Margin="20,10"
+                        Margin="20,7"
                         Command="{Binding Test_Click}"
                         CommandParameter="{Binding ElementName=_Window}"
                         Style="{DynamicResource MaterialDesignRaisedButton}">
                         测试
                     </Button>
-                    <ComboBox
-                        x:Name="Sim"
+                    <StackPanel
                         Width="120"
-                        Margin="20,10"
-                        materialDesign:ColorZoneAssist.Mode="Inverted"
-                        materialDesign:HintAssist.FloatingOffset="0, -18"
-                        materialDesign:HintAssist.FloatingScale="0.8"
-                        materialDesign:HintAssist.Hint="相似度"
-                        materialDesign:TextFieldAssist.HasClearButton="False"
-                        materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource SecondaryAccentBrush}"
-                        SelectedIndex="{Binding SimSelectedIndex, Mode=TwoWay}"
-                        Style="{StaticResource MaterialDesignFloatingHintComboBox}">
-                        <ComboBoxItem>100</ComboBoxItem>
-                        <ComboBoxItem>95</ComboBoxItem>
-                        <ComboBoxItem>90</ComboBoxItem>
-                        <ComboBoxItem>85</ComboBoxItem>
-                        <ComboBoxItem>80</ComboBoxItem>
-                    </ComboBox>
-                    <TextBox
-                        x:Name="Result"
+                        Margin="20,7"
+                        Orientation="Horizontal"
+                        ToolTip="相似度">
+                        <materialDesign:PackIcon
+                            Width="24"
+                            Height="24"
+                            VerticalAlignment="Bottom"
+                            Foreground="#666666"
+                            Kind="SortNumericAscending" />
+                        <ComboBox
+                            x:Name="Sim"
+                            Width="85"
+                            Margin="10,0,0,0"
+                            HorizontalContentAlignment="Center"
+                            SelectedIndex="{Binding SimSelectedIndex, Mode=TwoWay}">
+                            <ComboBoxItem>100</ComboBoxItem>
+                            <ComboBoxItem>95</ComboBoxItem>
+                            <ComboBoxItem>90</ComboBoxItem>
+                            <ComboBoxItem>85</ComboBoxItem>
+                            <ComboBoxItem>80</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel
                         Width="120"
-                        Margin="20,10"
-                        materialDesign:HintAssist.FloatingOffset="0, -18"
-                        materialDesign:HintAssist.FloatingScale="0.8"
-                        materialDesign:HintAssist.Hint="返回值"
-                        materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                        IsReadOnly="True"
-                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                        Text="{Binding TestResult}" />
-
-                    <ComboBox
-                        x:Name="Format"
+                        Margin="20,7"
+                        Orientation="Horizontal"
+                        ToolTip="返回结果">
+                        <materialDesign:PackIcon
+                            Width="24"
+                            Height="24"
+                            VerticalAlignment="Bottom"
+                            Foreground="#666666"
+                            Kind="DebugStepOver" />
+                        <TextBox
+                            x:Name="Result"
+                            Width="85"
+                            Margin="10,0,0,0"
+                            IsReadOnly="True"
+                            Text="{Binding TestResult}" />
+                    </StackPanel>
+                    <StackPanel
                         Width="120"
-                        Margin="20,10"
-                        materialDesign:ColorZoneAssist.Mode="Inverted"
-                        materialDesign:HintAssist.FloatingOffset="0, -18"
-                        materialDesign:HintAssist.FloatingScale="0.8"
-                        materialDesign:HintAssist.Hint="格式"
-                        materialDesign:TextFieldAssist.HasClearButton="False"
-                        materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource SecondaryAccentBrush}"
-                        SelectedIndex="{Binding FormatSelectedIndex, Mode=TwoWay}"
-                        Style="{StaticResource MaterialDesignFloatingHintComboBox}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding Format_SelectionChanged}" CommandParameter="{Binding ElementName=_Window}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <ComboBoxItem>多点比色格式</ComboBoxItem>
-                        <ComboBoxItem>大漠/乐玩找色格式</ComboBoxItem>
-                        <ComboBoxItem>按键多点找色格式</ComboBoxItem>
-                        <ComboBoxItem>按键多点比色格式</ComboBoxItem>
-                        <ComboBoxItem>触动多点找色格式</ComboBoxItem>
-                        <ComboBoxItem>触动多点比色格式</ComboBoxItem>
-                        <ComboBoxItem>AJ多点找色格式</ComboBoxItem>
-                        <ComboBoxItem>EC多点找色格式</ComboBoxItem>
-                        <ComboBoxItem>自定义找色格式</ComboBoxItem>
-                        <ComboBoxItem>自定义比色格式</ComboBoxItem>
-                        <ComboBoxItem>锚点多点比色格式</ComboBoxItem>
-                        <ComboBoxItem>锚点多点找色格式</ComboBoxItem>
-                    </ComboBox>
-                    <TextBox
-                        x:Name="Range"
+                        Margin="20,7"
+                        Orientation="Horizontal"
+                        ToolTip="图色格式">
+                        <materialDesign:PackIcon
+                            Width="24"
+                            Height="24"
+                            VerticalAlignment="Bottom"
+                            Foreground="#666666"
+                            Kind="FormatFont" />
+                        <ComboBox
+                            x:Name="Format"
+                            Width="85"
+                            Margin="10,0,0,0"
+                            HorizontalContentAlignment="Center"
+                            SelectedIndex="{Binding FormatSelectedIndex, Mode=TwoWay}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding Format_SelectionChanged}" CommandParameter="{Binding ElementName=_Window}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <ComboBoxItem>多点比色格式</ComboBoxItem>
+                            <ComboBoxItem>大漠/乐玩找色格式</ComboBoxItem>
+                            <ComboBoxItem>按键多点找色格式</ComboBoxItem>
+                            <ComboBoxItem>按键多点比色格式</ComboBoxItem>
+                            <ComboBoxItem>触动多点找色格式</ComboBoxItem>
+                            <ComboBoxItem>触动多点比色格式</ComboBoxItem>
+                            <ComboBoxItem>AJ多点找色格式</ComboBoxItem>
+                            <ComboBoxItem>EC多点找色格式</ComboBoxItem>
+                            <ComboBoxItem>自定义找色格式</ComboBoxItem>
+                            <ComboBoxItem>自定义比色格式</ComboBoxItem>
+                            <ComboBoxItem>锚点多点比色格式</ComboBoxItem>
+                            <ComboBoxItem>锚点多点找色格式</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel
                         Width="120"
-                        Margin="20,10"
-                        materialDesign:HintAssist.FloatingOffset="0, -18"
-                        materialDesign:HintAssist.FloatingScale="0.8"
-                        materialDesign:HintAssist.Hint="范围"
-                        materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                        Text="{Binding Range, Mode=TwoWay}" />
+                        Margin="20,7"
+                        Orientation="Horizontal"
+                        ToolTip="范围">
+                        <materialDesign:PackIcon
+                            Width="24"
+                            Height="24"
+                            VerticalAlignment="Bottom"
+                            Foreground="#666666"
+                            Kind="CodeBrackets" />
+                        <TextBox
+                            x:Name="Range"
+                            Width="85"
+                            Margin="10,0,0,0"
+                            Text="{Binding Range, Mode=TwoWay}" />
+                    </StackPanel>
                     <Button
                         x:Name="CutImg"
                         Width="120"
-                        Margin="20,10"
+                        Margin="20,7"
                         Command="{Binding CutBmp_Click}"
                         Style="{DynamicResource MaterialDesignRaisedButton}">
                         裁图
@@ -211,7 +236,7 @@
                     <Button
                         x:Name="Create"
                         Width="120"
-                        Margin="20,10"
+                        Margin="20,7"
                         Command="{Binding Create_Click}"
                         Style="{DynamicResource MaterialDesignRaisedButton}">
                         生成
@@ -219,8 +244,8 @@
                     <TextBox
                         x:Name="ColorString"
                         Width="120"
-                        Height="150"
-                        Margin="20,10"
+                        Height="120"
+                        Margin="20,7"
                         Padding="0"
                         materialDesign:HintAssist.FloatingOffset="0, -18"
                         materialDesign:HintAssist.FloatingScale="1"
@@ -233,7 +258,7 @@
                     <Button
                         x:Name="Copy"
                         Width="120"
-                        Margin="20,10"
+                        Margin="20,7"
                         Click="Copy_Click"
                         Style="{DynamicResource MaterialDesignRaisedButton}">
                         复制
@@ -241,7 +266,7 @@
                     <Button
                         x:Name="Clear"
                         Width="120"
-                        Margin="20,10"
+                        Margin="20,7"
                         Command="{Binding Clear_Click}"
                         Style="{DynamicResource MaterialDesignRaisedButton}">
                         清空

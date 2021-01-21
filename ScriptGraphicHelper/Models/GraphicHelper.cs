@@ -44,8 +44,8 @@ namespace ScriptGraphicHelper.Models
                 int bottom = (int)range.Bottom;
                 int width = right - left;
                 int height = bottom - top;
-                Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-                BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+                Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+                BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                 unsafe
                 {
                     byte* ptr = (byte*)data.Scan0;
@@ -59,8 +59,7 @@ namespace ScriptGraphicHelper.Models
                             ptr[ptr_location] = ScreenData[parent_location];
                             ptr[ptr_location + 1] = ScreenData[parent_location + 1];
                             ptr[ptr_location + 2] = ScreenData[parent_location + 2];
-                            ptr[ptr_location + 3] = 255;
-                            ptr_location += 4;
+                            ptr_location += 3;
                             parent_location += FormatSize;
                         }
                     }
