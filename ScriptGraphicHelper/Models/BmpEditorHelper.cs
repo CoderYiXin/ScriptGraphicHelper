@@ -313,7 +313,6 @@ namespace ScriptGraphicHelper.Models
                     }
                 }
                 bitmap.UnlockBits(data);
-                bitmap.Save(@"C:\Users\PC\Documents\test.bmp");
                 return bitmap;
             });
             return await task;
