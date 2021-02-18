@@ -176,11 +176,6 @@ namespace ScriptGraphicHelper.Views
                     e.Handled = true;
                 }
             }
-            if (key == Key.F3)
-            {
-                //Description description = new Description();
-                //description.ShowDialog();
-            }
         }
         private void Copy_Click(object sender, RoutedEventArgs e)
         {

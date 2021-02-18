@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
@@ -8,8 +8,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RootNamespace>ScriptGraphicHelper</RootNamespace>
     <Platforms>AnyCPU;x86;x64</Platforms>
-    <Version>1.1.6</Version>
+    <Version>1.1.8</Version>
     <Configurations>Debug;Release;Debug_X64</Configurations>
+    <RepositoryUrl>https://github.com/yiszza/ScriptGraphicHelper</RepositoryUrl>
+    <Authors>yissza</Authors>
+    <Company />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -28,6 +31,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>true</Prefer32Bit>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -75,10 +79,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ico.ico" />
-    <Resource Include="Images\point.png" />
-    <Resource Include="Images\selectHwd.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">

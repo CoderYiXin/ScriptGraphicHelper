@@ -13,6 +13,7 @@ namespace ScriptGraphicHelper.Models
     {
         public override string Path { get; set; } = string.Empty;
         public override string Name { get; set; } = string.Empty;
+        public string BmpPath { get; set; } = string.Empty;
         public override bool IsStart(int index)
         {
             string result = PipeCmd("isvmrunning -i " + index.ToString());
@@ -35,17 +36,21 @@ namespace ScriptGraphicHelper.Models
             });
             return await task;
         }
-        public override async Task<Bitmap> ScreenShot(int Index)
+        public override async Task<Bitmap> ScreenShot(int index)
         {
             var task = Task.Run(() =>
             {
-                if (!IsStart(Index))
+                if (!IsStart(index))
                 {
                     MessageBox.Show("模拟器未启动 ! ");
                     return new Bitmap(1, 1);
                 }
+                if (BmpPath == string.Empty)
+                {
+                    BmpPath = BmpPathGet(index);
+                }
                 string BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
-                Screencap(Index, "/mnt/sdcard/Pictures", BmpName);
+                Screencap(index, "/mnt/sdcard/Pictures", BmpName);
                 for (int i = 0; i < 10; i++)
                 {
                     Task.Delay(200).Wait();
@@ -70,7 +75,6 @@ namespace ScriptGraphicHelper.Models
             });
             return await task;
         }
-        public string BmpPath { get; set; }
         public XyEmulatorHelper()//初始化 , 获取模拟器路径
         {
             Name = "逍遥模拟器";
@@ -87,7 +91,6 @@ namespace ScriptGraphicHelper.Models
             {
                 int index = path.LastIndexOf("\\");
                 Path = path.Substring(0, index + 1).Trim('"');
-                BmpPath = BmpPathGet();
             }
         }
         public string GetInkTargetPath(string path, string fileName)
@@ -145,14 +148,14 @@ namespace ScriptGraphicHelper.Models
         {
             PipeCmd("-i " + index.ToString() + " adb \"shell /system/bin/screencap -p " + savePath.TrimEnd('/') + "/" + saveName + "\"");
         }
-        public string BmpPathGet()
+        public string BmpPathGet(int index)
         {
             try
             {
-                string result = PipeCmd("getconfigex -i 0 picturepath");
-                int index = result.IndexOf(":") + 2;
+                string result = PipeCmd(string.Format("getconfigex -i {0} picturepath",index));
+                int firstIndex = result.IndexOf(":") + 2;
                 int lastIndex = result.LastIndexOf("\\");
-                return result.Substring(index, lastIndex - index + 1).Trim() + "逍遥安卓照片\\";
+                return result.Substring(firstIndex, lastIndex - firstIndex + 1).Trim() + "逍遥安卓照片\\";
             }
             catch
             {

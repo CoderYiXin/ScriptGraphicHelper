@@ -12,6 +12,9 @@
     <Compile Update="Views\Config.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\DiySim.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\GetHwnd.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -24,6 +27,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Config.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\DiySim.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\GetHwnd.xaml">

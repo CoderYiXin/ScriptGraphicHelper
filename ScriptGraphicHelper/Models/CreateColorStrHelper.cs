@@ -5,27 +5,45 @@ using System.Windows;
 
 namespace ScriptGraphicHelper.Models
 {
+    public enum FormatMode
+    {
+        compareStr = 0,
+        dmFindStr = 1,
+        ajFindStr = 2,
+        ajCompareStr = 3,
+        cdFindStr = 4,
+        cdCompareStr = 5,
+        autojsFindStr = 6,
+        ecFindStr = 7,
+        diyFindStr = 8,
+        diyCompareStr = 9,
+        anchorsCompareStr = 10,
+        anchorsFindStr = 11,
+        anchorsCompareStrTest = 12,
+        anchorsFindStrTest = 13
+
+    };
     public static class CreateColorStrHelper
     {
         public static bool IsAddRange { get; set; } = false;
-        public static string Create(int index, ObservableCollection<ColorInfo> colorInfos, Range rect = null)
+        public static string Create(FormatMode mode, ObservableCollection<ColorInfo> colorInfos, Range rect = null)
         {
-            return index switch
+            return mode switch
             {
-                0 => CompareStr(colorInfos),
-                1 => DmFindStr(colorInfos, rect),
-                2 => AjFindStr(colorInfos, rect),
-                3 => AjCompareStr(colorInfos),
-                4 => CdFindStr(colorInfos, rect),
-                5 => CdCompareStr(colorInfos),
-                6 => AutojsFindStr(colorInfos, rect),
-                7 => EcFindStr(colorInfos, rect),
-                8 => DiyFindStr(colorInfos, rect),
-                9 => DiyCompareStr(colorInfos),
-                10 => AnchorsCompareStr(colorInfos),
-                11 => AnchorsFindStr(colorInfos),
-                12 => AnchorsCompareStrTest(colorInfos),
-                13 => AnchorsCompareStrTest(colorInfos),
+                FormatMode.compareStr => CompareStr(colorInfos),
+                FormatMode.dmFindStr => DmFindStr(colorInfos, rect),
+                FormatMode.ajFindStr => AjFindStr(colorInfos, rect),
+                FormatMode.ajCompareStr => AjCompareStr(colorInfos),
+                FormatMode.cdFindStr => CdFindStr(colorInfos, rect),
+                FormatMode.cdCompareStr => CdCompareStr(colorInfos),
+                FormatMode.autojsFindStr => AutojsFindStr(colorInfos, rect),
+                FormatMode.ecFindStr => EcFindStr(colorInfos, rect),
+                FormatMode.diyFindStr => DiyFindStr(colorInfos, rect),
+                FormatMode.diyCompareStr => DiyCompareStr(colorInfos),
+                FormatMode.anchorsCompareStr => AnchorsCompareStr(colorInfos),
+                FormatMode.anchorsFindStr => AnchorsFindStr(colorInfos, rect),
+                FormatMode.anchorsCompareStrTest => AnchorsCompareStrTest(colorInfos),
+                FormatMode.anchorsFindStrTest => AnchorsCompareStrTest(colorInfos),
                 _ => CompareStr(colorInfos),
             };
         }
@@ -67,7 +85,8 @@ namespace ScriptGraphicHelper.Models
                         }
                         else
                         {
-                            res = res.Substring(0, res.IndexOf(color) + 6);
+                            string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
+                            res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
                         }
                         colorStr += res + ",";
                     }
@@ -94,13 +113,14 @@ namespace ScriptGraphicHelper.Models
                         }
                         else
                         {
-                            res = res.Substring(0, res.IndexOf(color) + 6);
+                            string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
+                            res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
                         }
                         colorStr += res + ",";
                     }
                 }
             }
-            colorStr = "\"" + colorStr.Trim(',') + "\"";
+            colorStr = colorStr.Trim(',');
             string result = diyFormat.CompareStrFormat;
 
             if (result.IndexOf("{colorStr}") != -1)
@@ -138,9 +158,10 @@ namespace ScriptGraphicHelper.Models
                             }
                             else
                             {
-                                res = res.Substring(0, res.IndexOf(color) + 6);
+                                string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
+                                res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
                             }
-                            colorStr[0] += "\"" + res + "\"";
+                            colorStr[0] += res;
                         }
                         else
                         {
@@ -157,9 +178,10 @@ namespace ScriptGraphicHelper.Models
                             }
                             else
                             {
-                                res = res.Substring(0, res.IndexOf(color) + 6);
+                                string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
+                                res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
                             }
-                            colorStr[0] += "\"" + res + "\"";
+                            colorStr[0] += res;
                         }
                     }
                     else
@@ -189,7 +211,8 @@ namespace ScriptGraphicHelper.Models
                             }
                             else
                             {
-                                res = res.Substring(0, res.IndexOf(color) + 6);
+                                string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
+                                res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
                             }
                             colorStr[1] += res + ",";
                         }
@@ -216,14 +239,15 @@ namespace ScriptGraphicHelper.Models
                             }
                             else
                             {
-                                res = res.Substring(0, res.IndexOf(color) + 6);
+                                string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
+                                res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
                             }
                             colorStr[1] += res + ",";
                         }
                     }
                 }
             }
-            colorStr[1] = "\"" + colorStr[1].Trim(',') + "\"";
+            colorStr[1] = colorStr[1].Trim(',');
             string result = diyFormat.FindStrFormat;
             if (result.IndexOf("{range}") != -1)
             {
@@ -493,7 +517,7 @@ namespace ScriptGraphicHelper.Models
 
         public static string AnchorsCompareStr(ObservableCollection<ColorInfo> colorInfos)
         {
-            string result = "[" + colorInfos[0].Width.ToString() + "," + colorInfos[0].Height.ToString() + ",\r\n[";
+            string result = "[" + ColorInfo.Width.ToString() + "," + ColorInfo.Height.ToString() + ",\r\n[";
             foreach (ColorInfo colorInfo in colorInfos)
             {
                 if (colorInfo.IsChecked)
@@ -521,9 +545,13 @@ namespace ScriptGraphicHelper.Models
             result += "]\r\n]";
             return result;
         }
-        public static string AnchorsFindStr(ObservableCollection<ColorInfo> colorInfos)
+        public static string AnchorsFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
-            string result = "[" + colorInfos[0].Width.ToString() + "," + colorInfos[0].Height.ToString() + ",\r\n[";
+            string result = "[" + ColorInfo.Width.ToString() + "," + ColorInfo.Height.ToString();
+            if (IsAddRange)
+            {
+                result += string.Format(",\r\n[{0}],\r\n[", rect.ToStr(2));
+            }
             foreach (ColorInfo colorInfo in colorInfos)
             {
                 if (colorInfo.IsChecked)

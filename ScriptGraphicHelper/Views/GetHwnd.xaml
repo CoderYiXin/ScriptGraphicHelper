@@ -66,13 +66,67 @@
                         PreviewMouseDown="Button_PreviewMouseDown"
                         PreviewMouseUp="Button_PreviewMouseUp"
                         Style="{StaticResource MaterialDesignFlatButton}">
-                        <Image
+                        <Viewbox
                             Width="24"
                             Height="24"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            RenderOptions.BitmapScalingMode="Fant"
-                            Source="/Images/selectHwd.png" />
+                            Stretch="Uniform">
+                            <Canvas Width="48" Height="48">
+                                <Rectangle
+                                    Width="48"
+                                    Height="48"
+                                    Fill="#03ffffff" />
+                                <Ellipse
+                                    Canvas.Left="4"
+                                    Canvas.Top="4"
+                                    Width="40"
+                                    Height="40"
+                                    Stroke="#FFFFFFFF"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4" />
+                                <Path
+                                    Stroke="#FFFFFFFF"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M24 37V44" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FFFFFFFF"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M36 24H44" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FFFFFFFF"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M4 24H11" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FFFFFFFF"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M24 11V4" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                            </Canvas>
+                        </Viewbox>
                     </Button>
                     <TextBlock
                         Margin="0,20,0,0"

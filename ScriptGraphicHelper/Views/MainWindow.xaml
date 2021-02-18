@@ -6,9 +6,9 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     Name="_Window"
-    Title="综合图色助手 V1.1.7"
+    Title="综合图色助手 V1.1.8"
     Width="1450"
-    Height="820"
+    Height="825"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Background="{DynamicResource MaterialDesignPaper}"
     Closed="Window_Closed"
@@ -65,29 +65,95 @@
                     Height="Auto"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top">
-                    <ComboBox
-                        x:Name="EmulatorOptions"
+                    <StackPanel
                         Width="120"
-                        Margin="20,7"
-                        materialDesign:ColorZoneAssist.Mode="Inverted"
-                        materialDesign:HintAssist.FloatingOffset="0, -18"
-                        materialDesign:HintAssist.FloatingScale="1"
-                        materialDesign:HintAssist.Hint="{Binding EmulatorOptionsHint, Mode=TwoWay}"
-                        materialDesign:TextFieldAssist.HasClearButton="False"
-                        materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource AttentionToActionBrush}"
-                        ItemsSource="{Binding EmulatorInfo, Mode=TwoWay}"
-                        Style="{StaticResource MaterialDesignFloatingHintComboBox}">
-                        <ComboBox.ContextMenu>
-                            <ContextMenu Style="{DynamicResource MaterialDesignContextMenu}">
-                                <MenuItem Command="{Binding ClearEmulatorOptions_Click}" Header="重置选择" />
-                            </ContextMenu>
-                        </ComboBox.ContextMenu>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding Emulator_SelectionChanged}" CommandParameter="{Binding ElementName=_Window}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
+                        Margin="20,15,20,10"
+                        Orientation="Horizontal"
+                        ToolTip="{Binding EmulatorOptionsToolTip, Mode=TwoWay}">
+                        <Viewbox
+                            Width="24"
+                            Height="24"
+                            Margin="0,3,0,0"
+                            Stretch="Uniform">
+                            <Canvas Width="48" Height="48">
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M5 8C5 6.89543 5.89543 6 7 6H41C42.1046 6 43 6.89543 43 8V32C43 33.1046 42.1046 34 41 34H7C5.89543 34 5 33.1046 5 32V8Z" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Fill="#FF666666"
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="1">
+                                    <Path.Data>
+                                        <PathGeometry Figures="m 5 28.198368 c 0 -0.80106 0.89543 -1.450407 2 -1.450407 h 34 c 1.1046 0 2 0.649347 2 1.450407 v 4.351224 C 43 33.350652 42.1046 34 41 34 H 7 C 5.89543 34 5 33.350652 5 32.549592 Z" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M22 12L18 17" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M28 14L25 18" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Ellipse
+                                    Canvas.Left="22"
+                                    Canvas.Top="29"
+                                    Width="4"
+                                    Height="4"
+                                    Fill="#FF303030" />
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M17 34L14 42H34L31 34" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                            </Canvas>
+                        </Viewbox>
+                        <ComboBox
+                            x:Name="EmulatorOptions"
+                            Width="85"
+                            Margin="10,0,0,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            ItemsSource="{Binding EmulatorInfo, Mode=TwoWay}">
+                            <ComboBox.ContextMenu>
+                                <ContextMenu Style="{DynamicResource MaterialDesignContextMenu}">
+                                    <MenuItem Command="{Binding ClearEmulatorOptions_Click}" Header="重置选择" />
+                                </ContextMenu>
+                            </ComboBox.ContextMenu>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding Emulator_SelectionChanged}" CommandParameter="{Binding ElementName=_Window}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                    </StackPanel>
                     <Button
                         x:Name="ScreenShot"
                         Width="120"
@@ -130,17 +196,93 @@
                         Style="{DynamicResource MaterialDesignRaisedButton}">
                         测试
                     </Button>
+
                     <StackPanel
                         Width="120"
                         Margin="20,7"
                         Orientation="Horizontal"
                         ToolTip="相似度">
-                        <materialDesign:PackIcon
+                        <Viewbox
                             Width="24"
                             Height="24"
-                            VerticalAlignment="Bottom"
-                            Foreground="#666666"
-                            Kind="SortNumericAscending" />
+                            Stretch="Uniform">
+                            <Canvas Width="48" Height="48">
+                                <Rectangle
+                                    Width="48"
+                                    Height="48"
+                                    Fill="#03ffffff" />
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="3">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M44 14L34 4L30.25 7.75L26.5 11.5L19 19L11.5 26.5L7.75 30.25L4 34L14 44L44 14Z" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="3">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M30.25 7.75L7.75 30.25" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="3">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M9 29L13 33" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="3">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M14 24L20 30" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="3">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M19 19L23 23" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="3">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M24 14L30 20" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="3">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M29 9L33 13" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                            </Canvas>
+                        </Viewbox>
                         <ComboBox
                             x:Name="Sim"
                             Width="85"
@@ -152,6 +294,7 @@
                             <ComboBoxItem>90</ComboBoxItem>
                             <ComboBoxItem>85</ComboBoxItem>
                             <ComboBoxItem>80</ComboBoxItem>
+                            <ComboBoxItem>自定义</ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
                     <StackPanel
@@ -159,16 +302,127 @@
                         Margin="20,7"
                         Orientation="Horizontal"
                         ToolTip="返回结果">
-                        <materialDesign:PackIcon
+                        <Viewbox
                             Width="24"
                             Height="24"
-                            VerticalAlignment="Bottom"
-                            Foreground="#666666"
-                            Kind="DebugStepOver" />
+                            Stretch="Uniform">
+                            <Canvas Width="48" Height="48">
+                                <Canvas>
+                                    <Rectangle
+                                        Width="48"
+                                        Height="48"
+                                        Fill="#03ffffff"
+                                        StrokeLineJoin="Round"
+                                        StrokeThickness="4" />
+                                    <Canvas Name="g24">
+                                        <Canvas.RenderTransform>
+                                            <TranslateTransform X="4.000000" Y="4.000000" />
+                                        </Canvas.RenderTransform>
+                                        <Path
+                                            Stroke="#FF666666"
+                                            StrokeLineJoin="Round"
+                                            StrokeThickness="4">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M20 38 C32 38 34 27.5323633 34 24 C34 20.837862 34 16.1711953 34 10 L6 10 C6 13.442296 6 18.1089627 6 24 C6 27.450596 8 38 20 38 Z" FillRule="NonZero" />
+                                            </Path.Data>
+                                        </Path>
+                                        <Path
+                                            Stroke="#FF666666"
+                                            StrokeEndLineCap="Round"
+                                            StrokeLineJoin="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="4">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M3.55271368e-15 4 L6 10" FillRule="EvenOdd" />
+                                            </Path.Data>
+                                        </Path>
+                                        <Path
+                                            Stroke="#FF666666"
+                                            StrokeEndLineCap="Round"
+                                            StrokeLineJoin="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="4">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M40 4 L34 10" FillRule="EvenOdd" />
+                                            </Path.Data>
+                                        </Path>
+                                        <Path
+                                            Stroke="#FF666666"
+                                            StrokeEndLineCap="Round"
+                                            StrokeLineJoin="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="4">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M0 23 L6 23" FillRule="EvenOdd" />
+                                            </Path.Data>
+                                        </Path>
+                                        <Path
+                                            Stroke="#FF666666"
+                                            StrokeEndLineCap="Round"
+                                            StrokeLineJoin="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="4">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M40 23 L34 23" FillRule="EvenOdd" />
+                                            </Path.Data>
+                                        </Path>
+                                        <Path
+                                            Stroke="#FF666666"
+                                            StrokeEndLineCap="Round"
+                                            StrokeLineJoin="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="4">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M3 40 L9 34" FillRule="EvenOdd" />
+                                            </Path.Data>
+                                        </Path>
+                                        <Path
+                                            Stroke="#FF666666"
+                                            StrokeEndLineCap="Round"
+                                            StrokeLineJoin="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="4">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M37 40 L31 34" FillRule="EvenOdd" />
+                                            </Path.Data>
+                                        </Path>
+                                        <Path
+                                            Stroke="#FF666666"
+                                            StrokeEndLineCap="Round"
+                                            StrokeLineJoin="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="4">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M20 38 L20 10" FillRule="EvenOdd" />
+                                            </Path.Data>
+                                        </Path>
+                                        <Path
+                                            Stroke="#FF666666"
+                                            StrokeEndLineCap="Round"
+                                            StrokeLineJoin="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="4">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M10.920475 35.0408965 C13.002464 36.7831828 15.9245088 38 20 38 L20 38 C24.1112534 38 27.0487287 36.7713317 29.1341392 35.0138386" FillRule="EvenOdd" />
+                                            </Path.Data>
+                                        </Path>
+                                        <Path
+                                            Stroke="#FF666666"
+                                            StrokeLineJoin="Round"
+                                            StrokeThickness="4">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M28 8.33333333 C28 3.73096042 24.418278 0 20 0 C15.581722 0 12 3.73096042 12 8.33333333 L12 10 L28 10 L28 8.33333333 Z" FillRule="NonZero" />
+                                            </Path.Data>
+                                        </Path>
+                                    </Canvas>
+                                </Canvas>
+                            </Canvas>
+                        </Viewbox>
                         <TextBox
                             x:Name="Result"
                             Width="85"
                             Margin="10,0,0,0"
+                            HorizontalContentAlignment="Center"
                             IsReadOnly="True"
                             Text="{Binding TestResult}" />
                     </StackPanel>
@@ -177,12 +431,42 @@
                         Margin="20,7"
                         Orientation="Horizontal"
                         ToolTip="图色格式">
-                        <materialDesign:PackIcon
+                        <Viewbox
                             Width="24"
                             Height="24"
-                            VerticalAlignment="Bottom"
-                            Foreground="#666666"
-                            Kind="FormatFont" />
+                            Stretch="Uniform">
+                            <Canvas Width="48" Height="48">
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M16 13L4 25.4322L16 37" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M32 13L44 25.4322L32 37" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M28 4L21 44" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                            </Canvas>
+                        </Viewbox>
                         <ComboBox
                             x:Name="Format"
                             Width="85"
@@ -194,18 +478,18 @@
                                     <i:InvokeCommandAction Command="{Binding Format_SelectionChanged}" CommandParameter="{Binding ElementName=_Window}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
-                            <ComboBoxItem>多点比色格式</ComboBoxItem>
-                            <ComboBoxItem>大漠/乐玩找色格式</ComboBoxItem>
-                            <ComboBoxItem>按键多点找色格式</ComboBoxItem>
-                            <ComboBoxItem>按键多点比色格式</ComboBoxItem>
-                            <ComboBoxItem>触动多点找色格式</ComboBoxItem>
-                            <ComboBoxItem>触动多点比色格式</ComboBoxItem>
-                            <ComboBoxItem>AJ多点找色格式</ComboBoxItem>
-                            <ComboBoxItem>EC多点找色格式</ComboBoxItem>
-                            <ComboBoxItem>自定义找色格式</ComboBoxItem>
-                            <ComboBoxItem>自定义比色格式</ComboBoxItem>
-                            <ComboBoxItem>锚点多点比色格式</ComboBoxItem>
-                            <ComboBoxItem>锚点多点找色格式</ComboBoxItem>
+                            <ComboBoxItem>多点比色</ComboBoxItem>
+                            <ComboBoxItem>大漠/乐玩找色</ComboBoxItem>
+                            <ComboBoxItem>按键找色</ComboBoxItem>
+                            <ComboBoxItem>按键比色</ComboBoxItem>
+                            <ComboBoxItem>触动找色</ComboBoxItem>
+                            <ComboBoxItem>触动比色</ComboBoxItem>
+                            <ComboBoxItem>AJ找色</ComboBoxItem>
+                            <ComboBoxItem>EC找色</ComboBoxItem>
+                            <ComboBoxItem>自定义找色</ComboBoxItem>
+                            <ComboBoxItem>自定义比色</ComboBoxItem>
+                            <ComboBoxItem>锚点比色</ComboBoxItem>
+                            <ComboBoxItem>锚点找色</ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
                     <StackPanel
@@ -213,12 +497,53 @@
                         Margin="20,7"
                         Orientation="Horizontal"
                         ToolTip="范围">
-                        <materialDesign:PackIcon
+                        <Viewbox
                             Width="24"
                             Height="24"
-                            VerticalAlignment="Bottom"
-                            Foreground="#666666"
-                            Kind="CodeBrackets" />
+                            Stretch="Uniform">
+                            <Canvas Width="48" Height="48">
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M33 6H42V15" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M42 33V42H33" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M15 42H6V33" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                                <Path
+                                    Stroke="#FF666666"
+                                    StrokeEndLineCap="Round"
+                                    StrokeLineJoin="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="4">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M6 15V6H15" FillRule="NonZero" />
+                                    </Path.Data>
+                                </Path>
+                            </Canvas>
+                        </Viewbox>
                         <TextBox
                             x:Name="Range"
                             Width="85"
@@ -388,6 +713,7 @@
                     Height="{Binding ImgHeight}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
+                    AllowDrop="True"
                     Focusable="True"
                     SizeChanged="Window_SizeChanged"
                     Source="{Binding ImgSource}">
@@ -467,12 +793,35 @@
             VerticalAlignment="Top"
             IsVisibleChanged="Panel_5_IsVisibleChanged"
             Visibility="{Binding FindResultVisibility, Mode=TwoWay}">
-            <Image
-                x:Name="FindResult"
-                Width="29"
-                Height="38"
-                Source="/ScriptGraphicHelper;component/Images/point.png"
-                Stretch="UniformToFill" />
+            <Viewbox
+                Width="72"
+                Height="72"
+                Stretch="Uniform">
+                <Canvas Width="48" Height="48">
+                    <Rectangle
+                        Width="48"
+                        Height="48"
+                        Fill="#03ffffff" />
+                    <Path
+                        Fill="#FF4A90E2"
+                        Stroke="#FF4A90E2"
+                        StrokeLineJoin="Round"
+                        StrokeThickness="6">
+                        <Path.Data>
+                            <PathGeometry Figures="M24 44C24 44 39 32 39 19C39 10.7157 32.2843 4 24 4C15.7157 4 9 10.7157 9 19C9 32 24 44 24 44Z" FillRule="NonZero" />
+                        </Path.Data>
+                    </Path>
+                    <Path
+                        Fill="#FF43CCF8"
+                        Stroke="#FFFFFFFF"
+                        StrokeLineJoin="Round"
+                        StrokeThickness="4">
+                        <Path.Data>
+                            <PathGeometry Figures="M24 25C27.3137 25 30 22.3137 30 19C30 15.6863 27.3137 13 24 13C20.6863 13 18 15.6863 18 19C18 22.3137 20.6863 25 24 25Z" FillRule="NonZero" />
+                        </Path.Data>
+                    </Path>
+                </Canvas>
+            </Viewbox>
         </StackPanel>
     </Grid>
 </Window>

@@ -111,7 +111,7 @@ namespace ScriptGraphicHelper.ViewModels
         }
 
         bool isDown = false;
-        public ICommand Img_MouseDown => new DelegateCommand<System.Windows.Controls.Image>(async(e) =>
+        public ICommand Img_MouseDown => new DelegateCommand<System.Windows.Controls.Image>(async (e) =>
         {
             if (PenState)
             {
@@ -120,17 +120,22 @@ namespace ScriptGraphicHelper.ViewModels
                 int x = (int)point.X / 3 - 1;
                 int y = (int)point.Y / 3;
                 Color fc = ((SolidColorBrush)FillColor).Color;
-                for (int i = 0; i < 3; i++)
+
+                for (int i = -1; i < 2; i++)
                 {
-                    BmpEditorHelper.SetPixel(x + i, y, fc);
+                    for (int j = -1; j < 2; j++)
+                    {
+                        BmpEditorHelper.SetPixel(x + i, y + j, fc);
+                    }
                 }
-                Bitmap bitmap = await BmpEditorHelper.GetBmp(new Range(0,0, BmpEditorHelper.Width-1, BmpEditorHelper.Height-1));
+
+                Bitmap bitmap = await BmpEditorHelper.GetBmp(new Range(0, 0, BmpEditorHelper.Width - 1, BmpEditorHelper.Height - 1));
                 ImgSource = Bitmap2BitmapImage(bitmap);
                 bitmap.Dispose();
             }
 
         });
-        public ICommand Img_MouseMove => new DelegateCommand<System.Windows.Controls.Image>(async(e) =>
+        public ICommand Img_MouseMove => new DelegateCommand<System.Windows.Controls.Image>(async (e) =>
         {
             if (PenState && isDown)
             {
@@ -138,10 +143,15 @@ namespace ScriptGraphicHelper.ViewModels
                 int x = (int)point.X / 3 - 1;
                 int y = (int)point.Y / 3;
                 Color fc = ((SolidColorBrush)FillColor).Color;
-                for (int i = 0; i < 3; i++)
+
+                for (int i = -1; i < 2; i++)
                 {
-                    BmpEditorHelper.SetPixel(x + i, y, fc);
+                    for (int j = -1; j < 2; j++)
+                    {
+                        BmpEditorHelper.SetPixel(x + i, y + j, fc);
+                    }
                 }
+
                 Bitmap bitmap = await BmpEditorHelper.GetBmp(new Range(0, 0, BmpEditorHelper.Width - 1, BmpEditorHelper.Height - 1));
                 ImgSource = Bitmap2BitmapImage(bitmap);
                 bitmap.Dispose();
@@ -160,7 +170,7 @@ namespace ScriptGraphicHelper.ViewModels
         public ICommand Img_MouseLeave => new DelegateCommand<System.Windows.Controls.Image>((e) =>
         {
             isDown = false;
-          
+
         });
 
         public ICommand TB_TextChanged => new DelegateCommand(async () =>
@@ -179,7 +189,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             else
             {
-                bitmap = await BmpEditorHelper.SetPixels_Reverse(sc, fc, Tolerance);
+                bitmap = await BmpEditorHelper.SetPixels_Reverse(sc, fc, 100 - Tolerance);
             }
 
             ImgSource = Bitmap2BitmapImage(bitmap);

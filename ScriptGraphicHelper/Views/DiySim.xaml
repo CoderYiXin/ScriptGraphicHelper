@@ -1,0 +1,52 @@
+﻿<Window
+    x:Class="ScriptGraphicHelper.Views.DiySim"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ScriptGraphicHelper.Views"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="自定义相似度"
+    Width="220"
+    Height="250"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{materialDesign:MaterialDesignFont}"
+    Loaded="Window_Loaded"
+    ResizeMode="NoResize"
+    TextElement.FontSize="14"
+    TextElement.FontWeight="Normal"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    mc:Ignorable="d">
+    <StackPanel
+        Width="Auto"
+        Height="Auto"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Top">
+        <TextBox
+            x:Name="SetSim"
+            Width="180"
+            Margin="20,12"
+            materialDesign:HintAssist.FloatingOffset="0, -20"
+            materialDesign:HintAssist.FloatingScale="0.9"
+            materialDesign:HintAssist.Hint="相似度"
+            materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+        <TextBox
+            x:Name="SetOffset"
+            Width="180"
+            Margin="20,12"
+            materialDesign:HintAssist.FloatingOffset="0, -20"
+            materialDesign:HintAssist.FloatingScale="0.9"
+            materialDesign:HintAssist.Hint="偏移查找"
+            materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+        <Button
+            x:Name="Ok"
+            Width="180"
+            Margin="20,20"
+            Click="Ok_Click"
+            Style="{DynamicResource MaterialDesignRaisedButton}">
+            确定
+        </Button>
+    </StackPanel>
+</Window>

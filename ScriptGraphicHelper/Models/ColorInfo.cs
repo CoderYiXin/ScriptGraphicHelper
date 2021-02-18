@@ -69,8 +69,8 @@ namespace ScriptGraphicHelper.Models
         public System.Drawing.Color TheColor { get; set; }
         public Point ThePoint { get; set; }
 
-        public double Width { get; set; }
-        public double Height { get; set; }
+        public static double Width { get; set; } = 0;
+        public static double Height { get; set; } = 0;
         public static string AllOffsetColor { get; set; } = "000000";
         public static int BrushMode { get; set; } = 0;
 
@@ -98,7 +98,7 @@ namespace ScriptGraphicHelper.Models
             }
             IsChecked = true;
         }
-        public ColorInfo(int index, string anchors, Point point, System.Drawing.Color color, double width, double height)
+        public ColorInfo(int index, string anchors, Point point, System.Drawing.Color color)
         {
             TheColor = color;
             point.X = Math.Round(point.X, 0);
@@ -120,8 +120,6 @@ namespace ScriptGraphicHelper.Models
                 Brush_2 = new SolidColorBrush(Color.FromArgb(color.A, color.R, color.G, color.B));
             }
             IsChecked = true;
-            Width = width;
-            Height = height;
         }
 
 

@@ -29,11 +29,11 @@ namespace ScriptGraphicHelper.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private string _emulatorOptionsHint;
-        public string EmulatorOptionsHint
+        private string _emulatorOptionsToolTip;
+        public string EmulatorOptionsToolTip
         {
-            get { return _emulatorOptionsHint; }
-            set { SetProperty(ref _emulatorOptionsHint, value); }
+            get { return _emulatorOptionsToolTip; }
+            set { SetProperty(ref _emulatorOptionsToolTip, value); }
         }
         private string _testResult;
         public string TestResult
@@ -42,7 +42,7 @@ namespace ScriptGraphicHelper.ViewModels
             set { SetProperty(ref _testResult, value); }
         }
 
-        private string _range;
+        private string _range = string.Empty;
         public string Range
         {
             get { return _range; }
@@ -145,7 +145,19 @@ namespace ScriptGraphicHelper.ViewModels
         public int SimSelectedIndex
         {
             get { return _simSelectedIndex; }
-            set { SetProperty(ref _simSelectedIndex, value); }
+            set
+            {
+                SetProperty(ref _simSelectedIndex, value);
+                if (value == 5)
+                {
+                    DiySim diySim = new DiySim();
+                    if ((bool)diySim.ShowDialog())
+                    {
+                        GraphicHelper.DiySim = DiySim.Sim;
+                        GraphicHelper.DiyOffset = DiySim.Offset;
+                    }
+                }
+            }
         }
 
         private Thickness _selectRectangleMargin;
@@ -202,7 +214,7 @@ namespace ScriptGraphicHelper.ViewModels
 
         public MainWindowViewModel()
         {
-            EmulatorOptionsHint = "模拟器";
+            EmulatorOptionsToolTip = "模式配置";
             LoupeVisibility = Visibility.Hidden;
             SelectRectangleVisibility = Visibility.Hidden;
             FindResultVisibility = Visibility.Hidden;
@@ -248,26 +260,10 @@ namespace ScriptGraphicHelper.ViewModels
                      if (MyEmulator.IsInit == 2)
                      {
                          MyEmulator.Index = e.EmulatorOptions.SelectedIndex;
+                         EmulatorOptionsToolTip = EmulatorInfo[MyEmulator.Index];
                      }
                      else if (MyEmulator.IsInit == 0)
                      {
-                         if (EmulatorInfo.Count != 0)
-                         {
-
-                             if (e.EmulatorOptions.SelectedIndex == EmulatorInfo.Count - 2)
-                             {
-                                 EmulatorOptionsHint = "tcp连接";
-                             }
-                             else if (e.EmulatorOptions.SelectedIndex == EmulatorInfo.Count - 1)
-                             {
-                                 EmulatorOptionsHint = "句柄";
-                             }
-                             else
-                             {
-                                 EmulatorOptionsHint = "模拟器";
-                             }
-                         }
-
                          WindowCursor = Cursors.Wait;
                          MyEmulator.Changed(e.EmulatorOptions.SelectedIndex);
                          EmulatorInfo = await MyEmulator.GetAll();
@@ -284,7 +280,7 @@ namespace ScriptGraphicHelper.ViewModels
 
         public ICommand CutBmp_Click => new DelegateCommand(async () =>
         {
-            if (Bmp is null || Range is null || Range.IndexOf("[") == -1)
+            if (Bmp is null || Range is null || !Range.Contains("[", 0))
             {
                 return;
             }
@@ -342,81 +338,80 @@ namespace ScriptGraphicHelper.ViewModels
                      }
                  });
         public ICommand Test_Click => new DelegateCommand<MainWindow>((e) =>
-                 {
-                     if (Bmp != null && ColorInfos.Count > 0)
-                     {
-                         byte[] sim = new byte[] { 100, 95, 90, 85, 80 };
-                         if (FormatSelectedIndex == 0 || FormatSelectedIndex == 3 || FormatSelectedIndex == 5)
-                         {
-                             string str = CreateColorStrHelper.Create(0, ColorInfos);
-                             TestResult = GraphicHelper.CompareColorEx(str.Trim('"'), sim[SimSelectedIndex]).ToString();
-                         }
-                         else if (FormatSelectedIndex == 10)
-                         {
-                             double width = ColorInfos[0].Width;
-                             double height = ColorInfos[1].Height;
-                             string str = CreateColorStrHelper.Create(12, ColorInfos);
-                             TestResult = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sim[SimSelectedIndex]).ToString();
-                         }
-                         else if (FormatSelectedIndex == 11)
-                         {
-                             Range rect = GetRange();
-                             double width = ColorInfos[0].Width;
-                             double height = ColorInfos[1].Height;
-                             string str = CreateColorStrHelper.Create(13, ColorInfos);
-                             System.Drawing.Point result = GraphicHelper.AnchorsFindColor(rect, width, height, str.Trim('"'), sim[SimSelectedIndex]);
-                             if (result.X >= 0 && result.Y >= 0)
-                             {
-                                 Point point = e.Img.TranslatePoint(new Point(result.X, result.Y), e);
-                                 FindResultMargin = new Thickness(point.X - 14, point.Y - 38, 0, 0);
-                                 FindResultVisibility = Visibility.Visible;
-                             }
-                             TestResult = result.ToString();
-                         }
-                         else
-                         {
-                             Range rect = GetRange();
-                             string str = CreateColorStrHelper.Create(1, ColorInfos, rect);
-                             string[] strArray = str.Split("\",\"");
-                             if (strArray[1].Length <= 3)
-                             {
-                                 MessageBox.Show("多点找色至少需要勾选两个颜色才可进行测试!", "错误");
-                                 TestResult = "error";
-                                 return;
-                             }
-                             string[] _str = strArray[0].Split(",\"");
-                             System.Drawing.Point result = GraphicHelper.FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, _str[^1].Trim('"'), strArray[1].Trim('"'), sim[SimSelectedIndex]);
-                             if (result.X >= 0 && result.Y >= 0)
-                             {
-                                 Point point = e.Img.TranslatePoint(new Point(result.X, result.Y), e);
-                                 FindResultMargin = new Thickness(point.X - 14, point.Y - 38, 0, 0);
-                                 FindResultVisibility = Visibility.Visible;
-                             }
-                             TestResult = result.ToString();
-                         }
-                     }
-                 });
+            {
+                if (Bmp != null && ColorInfos.Count > 0)
+                {
+                    int[] sim = new int[] { 100, 95, 90, 85, 80, 0 };
+                    if (FormatSelectedIndex == 0 || FormatSelectedIndex == 3 || FormatSelectedIndex == 5)
+                    {
+                        string str = CreateColorStrHelper.Create(0, ColorInfos);
+                        TestResult = GraphicHelper.CompareColorEx(str.Trim('"'), sim[SimSelectedIndex]).ToString();
+                    }
+                    else if (FormatSelectedIndex == (int)FormatMode.anchorsCompareStr)
+                    {
+                        double width = ColorInfo.Width;
+                        double height = ColorInfo.Height;
+                        string str = CreateColorStrHelper.Create(FormatMode.anchorsCompareStrTest, ColorInfos);
+                        TestResult = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sim[SimSelectedIndex]).ToString();
+                    }
+                    else if (FormatSelectedIndex == (int)FormatMode.anchorsFindStr)
+                    {
+                        Range rect = GetRange();
+                        double width = ColorInfo.Width;
+                        double height = ColorInfo.Height;
+                        string str = CreateColorStrHelper.Create(FormatMode.anchorsFindStrTest, ColorInfos);
+                        System.Drawing.Point result = GraphicHelper.AnchorsFindColor(rect, width, height, str.Trim('"'), sim[SimSelectedIndex]);
+                        if (result.X >= 0 && result.Y >= 0)
+                        {
+                            Point point = e.Img.TranslatePoint(new Point(result.X, result.Y), e);
+                            FindResultMargin = new Thickness(point.X - 36, point.Y - 72, 0, 0);
+                            FindResultVisibility = Visibility.Visible;
+                        }
+                        TestResult = result.ToString();
+                    }
+                    else
+                    {
+                        Range rect = GetRange();
+                        string str = CreateColorStrHelper.Create(FormatMode.dmFindStr, ColorInfos, rect);
+                        string[] strArray = str.Split("\",\"");
+                        if (strArray[1].Length <= 3)
+                        {
+                            MessageBox.Show("多点找色至少需要勾选两个颜色才可进行测试!", "错误");
+                            TestResult = "error";
+                            return;
+                        }
+                        string[] _str = strArray[0].Split(",\"");
+                        System.Drawing.Point result = GraphicHelper.FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, _str[^1].Trim('"'), strArray[1].Trim('"'), sim[SimSelectedIndex]);
+                        if (result.X >= 0 && result.Y >= 0)
+                        {
+                            Point point = e.Img.TranslatePoint(new Point(result.X, result.Y), e);
+                            FindResultMargin = new Thickness(point.X - 36, point.Y - 72, 0, 0);
+                            FindResultVisibility = Visibility.Visible;
+                        }
+                        TestResult = result.ToString();
+                    }
+                }
+            });
         public ICommand Create_Click => new DelegateCommand(() =>
                  {
                      if (ColorInfos.Count > 0)
                      {
                          Range rect = GetRange();
-                         if (Range != null)
+
+                         if (Range.IndexOf("[") != -1)
                          {
-                             if (Range.IndexOf("[") != -1)
-                             {
-                                 Range = "[" + rect.Left.ToString() + "," + rect.Top.ToString() + "," + rect.Right.ToString() + "," + rect.Bottom.ToString() + "]";
-                             }
-                             else
-                             {
-                                 Range = rect.Left.ToString() + "," + rect.Top.ToString() + "," + rect.Right.ToString() + "," + rect.Bottom.ToString();
-                             }
+                             Range = string.Format("[{0}]", rect.ToStr());
+                         }
+                         else if (FormatSelectedIndex == (int)FormatMode.anchorsCompareStr || FormatSelectedIndex == (int)FormatMode.anchorsFindStr)
+                         {
+                             Range = rect.ToStr(2);
                          }
                          else
                          {
-                             Range = rect.Left.ToString() + "," + rect.Top.ToString() + "," + rect.Right.ToString() + "," + rect.Bottom.ToString();
+                             Range = rect.ToStr();
                          }
-                         CreateStr = CreateColorStrHelper.Create(FormatSelectedIndex, ColorInfos, rect);
+
+                         CreateStr = CreateColorStrHelper.Create((FormatMode)FormatSelectedIndex, ColorInfos, rect);
                      }
                  });
         public ICommand Format_SelectionChanged => new DelegateCommand<MainWindow>((e) =>
@@ -452,12 +447,15 @@ namespace ScriptGraphicHelper.ViewModels
             {
                 return new Range(0, 0, ImgWidth, ImgHeight);
             }
-            double imgWidth = ImgWidth - 1;
-            double imgHeight = ImgHeight - 1;
+            double imgWidth = ColorInfo.Width - 1;
+            double imgHeight = ColorInfo.Height - 1;
             double left = ImgWidth;
             double top = ImgHeight;
             double right = 0;
             double bottom = 0;
+            int mode_1 = -1;
+            int mode_2 = -1;
+
             foreach (ColorInfo colorInfo in ColorInfos)
             {
                 if (colorInfo.IsChecked)
@@ -465,10 +463,12 @@ namespace ScriptGraphicHelper.ViewModels
                     if (colorInfo.ThePoint.X < left)
                     {
                         left = colorInfo.ThePoint.X;
+                        mode_1 = colorInfo.Anchors == "L" ? 0 : colorInfo.Anchors == "C" ? 1 : colorInfo.Anchors == "R" ? 2 : -1;
                     }
                     if (colorInfo.ThePoint.X > right)
                     {
                         right = colorInfo.ThePoint.X;
+                        mode_2 = colorInfo.Anchors == "L" ? 0 : colorInfo.Anchors == "C" ? 1 : colorInfo.Anchors == "R" ? 2 : -1;
                     }
                     if (colorInfo.ThePoint.Y < top)
                     {
@@ -478,9 +478,10 @@ namespace ScriptGraphicHelper.ViewModels
                     {
                         bottom = colorInfo.ThePoint.Y;
                     }
+
                 }
             }
-            return new Range(left >= 25 ? left - 25 : 0, top >= 25 ? top - 25 : 0, right + 25 > imgWidth ? imgWidth : right + 25, bottom + 25 > imgHeight ? imgHeight : bottom + 25);
+            return new Range(left >= 50 ? left - 50 : 0, top >= 50 ? top - 50 : 0, right + 50 > imgWidth ? imgWidth : right + 50, bottom + 50 > imgHeight ? imgHeight : bottom + 50, mode_1, mode_2);
         }
         private Point StartPoint { get; set; }
         private Point EndPoint { get; set; }
@@ -509,7 +510,13 @@ namespace ScriptGraphicHelper.ViewModels
                     else if (key == "D")
                         anchors = "R";
 
-                    ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchors, new Point(PointX, PointY), color, ImgWidth, ImgHeight));
+                    if (ColorInfos.Count == 0)
+                    {
+                        ColorInfo.Width = ImgWidth;
+                        ColorInfo.Height = ImgHeight;
+                    }
+
+                    ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchors, new Point(PointX, PointY), color));
 
                 }
             }
@@ -608,7 +615,13 @@ namespace ScriptGraphicHelper.ViewModels
                 else if (PointX < _)
                     anchors = "L";
 
-                ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchors, new Point(PointX, PointY), color, ImgWidth, ImgHeight));
+                if (ColorInfos.Count == 0)
+                {
+                    ColorInfo.Width = ImgWidth;
+                    ColorInfo.Height = ImgHeight;
+                }
+
+                ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchors, new Point(PointX, PointY), color));
 
             }
         });
@@ -839,7 +852,7 @@ namespace ScriptGraphicHelper.ViewModels
 
         [DllImport("gdi32.dll")]
         private static extern bool DeleteObject(IntPtr hObject);
-        private ImageSource Bitmap2BitmapImage(Bitmap bitmap)
+        private static ImageSource Bitmap2BitmapImage(Bitmap bitmap)
         {
             IntPtr hBitmap = bitmap.GetHbitmap();
             ImageSource imageSource = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());

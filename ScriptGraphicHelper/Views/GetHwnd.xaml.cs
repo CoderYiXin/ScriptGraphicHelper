@@ -89,7 +89,7 @@ namespace ScriptGraphicHelper.Views
 
         private class NativeMethods
         {
-            [DllImport("user32")]
+            [DllImport("user32", CharSet = CharSet.Unicode)]
             internal static extern IntPtr LoadCursorFromFile(string fileName);
 
             [DllImport("User32.DLL")]

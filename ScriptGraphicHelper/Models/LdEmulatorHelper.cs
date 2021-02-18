@@ -15,7 +15,7 @@ namespace ScriptGraphicHelper.Models
     {
         public override string Path { get; set; } = string.Empty;
         public override string Name { get; set; } = string.Empty;
-        public string BmpPath { get; set; }
+        public string BmpPath { get; set; } = string.Empty;
         public LdEmulatorHelper(int version)//初始化 , 获取雷电模拟器路径
         {
             try
@@ -87,10 +87,6 @@ namespace ScriptGraphicHelper.Models
             catch
             {
                 Path = string.Empty;
-            }
-            if (Path != string.Empty)
-            {
-                BmpPath = BmpPathGet();
             }
         }
         public override void Dispose() { }
@@ -215,17 +211,21 @@ namespace ScriptGraphicHelper.Models
             });
             return await task;
         }
-        public override async Task<Bitmap> ScreenShot(int Index)
+        public override async Task<Bitmap> ScreenShot(int index)
         {
             var task = Task.Run(() =>
             {
-                if (!IsStart(Index))
+                if (!IsStart(index))
                 {
                     MessageBox.Show("模拟器未启动 ! ");
                     return new Bitmap(1, 1);
                 }
+                if (BmpPath == string.Empty)
+                {
+                    BmpPath = BmpPathGet(index);
+                }
                 string BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
-                Screencap(Index, "/mnt/sdcard/Pictures", BmpName);
+                Screencap(index, "/mnt/sdcard/Pictures", BmpName);
                 for (int i = 0; i < 10; i++)
                 {
                     Task.Delay(200).Wait();
@@ -254,11 +254,11 @@ namespace ScriptGraphicHelper.Models
         {
             PipeCmd("-s " + ldIndex.ToString() + " /system/bin/screencap -p " + savePath.TrimEnd('/') + "/" + saveName, true);
         }
-        public string BmpPathGet()
+        public string BmpPathGet(int index)
         {
             try
             {
-                StreamReader streamReader = new StreamReader(Path + "\\vms\\config\\leidian0.config", false);
+                StreamReader streamReader = new StreamReader(string.Format(@"{0}\vms\config\leidian{1}.config", Path, index), false);
                 string ret = streamReader.ReadToEnd();
                 streamReader.Close();
                 JObject jsonObj = JObject.Parse(ret);

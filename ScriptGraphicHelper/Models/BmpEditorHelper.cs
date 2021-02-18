@@ -131,7 +131,7 @@ namespace ScriptGraphicHelper.Models
             byte fr = fc.R; byte fg = fc.G; byte fb = fc.B;
 
             int step = 0;
-            int similarity = (int)(255 - 255 * ((100 - offset) / 100.0));
+            int similarity = (int)(255 - 255 * ( offset / 100.0));
             for (int i = 0; i < Height; i++)
             {
                 for (int j = 0; j < Width; j++)
