@@ -251,7 +251,7 @@ namespace ScriptGraphicHelper.Models
             string result = diyFormat.FindStrFormat;
             if (result.IndexOf("{range}") != -1)
             {
-                result = result.Replace("{range}", rect.ToStr());
+                result = result.Replace("{range}", rect.ToString());
             }
             if (result.IndexOf("{firstColorStr}") != -1)
             {
@@ -268,7 +268,7 @@ namespace ScriptGraphicHelper.Models
             string result = string.Empty;
             if (IsAddRange)
             {
-                result = rect.ToStr() + ",";
+                result = rect.ToString() + ",";
             }
             bool isInit = false;
             Point startPoint = new Point();
@@ -334,7 +334,7 @@ namespace ScriptGraphicHelper.Models
             result = result.Trim(',');
             if (IsAddRange)
             {
-                result += "\",90," + rect.ToStr();
+                result += "\",90," + rect.ToString();
             }
             else
             {
@@ -347,7 +347,7 @@ namespace ScriptGraphicHelper.Models
             string result = string.Empty;
             if (IsAddRange)
             {
-                result = rect.ToStr() + ",";
+                result = rect.ToString() + ",";
             }
             bool isInit = false;
             Point startPoint = new Point();
@@ -411,7 +411,7 @@ namespace ScriptGraphicHelper.Models
             result = result.Trim(',');
             if (IsAddRange)
             {
-                result += "],{region:[" + rect.ToStr(1) + "],threshold:[26]}";
+                result += "],{region:[" + rect.ToString(1) + "],threshold:[26]}";
             }
             else
             {
@@ -452,7 +452,7 @@ namespace ScriptGraphicHelper.Models
             result = result.Trim(',');
             if (IsAddRange)
             {
-                result += "\",0.9," + rect.ToStr();
+                result += "\",0.9," + rect.ToString();
             }
             else
             {
@@ -550,7 +550,7 @@ namespace ScriptGraphicHelper.Models
             string result = "[" + ColorInfo.Width.ToString() + "," + ColorInfo.Height.ToString();
             if (IsAddRange)
             {
-                result += string.Format(",\r\n[{0}],\r\n[", rect.ToStr(2));
+                result += string.Format(",\r\n[{0}],\r\n[", rect.ToString(2));
             }
             foreach (ColorInfo colorInfo in colorInfos)
             {

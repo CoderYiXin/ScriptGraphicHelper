@@ -7,20 +7,14 @@ using ScriptGraphicHelper.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using static System.Environment;
 using Color = System.Drawing.Color;
 using Point = System.Windows.Point;
 using Range = ScriptGraphicHelper.Models.Range;
@@ -134,8 +128,8 @@ namespace ScriptGraphicHelper.ViewModels
         }
         public Bitmap Bmp { get; set; }
 
-        private int _formatSelectedIndex;
-        public int FormatSelectedIndex
+        private FormatMode _formatSelectedIndex;
+        public FormatMode FormatSelectedIndex
         {
             get { return _formatSelectedIndex; }
             set { SetProperty(ref _formatSelectedIndex, value); }
@@ -249,7 +243,6 @@ namespace ScriptGraphicHelper.ViewModels
         {
             if (MyEmulator.IsInit == 2)
             {
-                FormatSelectedIndex = -1;
                 MyEmulator.Dispose();
                 EmulatorInfo.Clear();
                 EmulatorInfo = MyEmulator.Init();
@@ -342,19 +335,19 @@ namespace ScriptGraphicHelper.ViewModels
                 if (Bmp != null && ColorInfos.Count > 0)
                 {
                     int[] sim = new int[] { 100, 95, 90, 85, 80, 0 };
-                    if (FormatSelectedIndex == 0 || FormatSelectedIndex == 3 || FormatSelectedIndex == 5)
+                    if (FormatSelectedIndex == FormatMode.compareStr || FormatSelectedIndex == FormatMode.ajCompareStr || FormatSelectedIndex == FormatMode.cdCompareStr || FormatSelectedIndex == FormatMode.diyCompareStr)
                     {
                         string str = CreateColorStrHelper.Create(0, ColorInfos);
                         TestResult = GraphicHelper.CompareColorEx(str.Trim('"'), sim[SimSelectedIndex]).ToString();
                     }
-                    else if (FormatSelectedIndex == (int)FormatMode.anchorsCompareStr)
+                    else if (FormatSelectedIndex == FormatMode.anchorsCompareStr)
                     {
                         double width = ColorInfo.Width;
                         double height = ColorInfo.Height;
                         string str = CreateColorStrHelper.Create(FormatMode.anchorsCompareStrTest, ColorInfos);
                         TestResult = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sim[SimSelectedIndex]).ToString();
                     }
-                    else if (FormatSelectedIndex == (int)FormatMode.anchorsFindStr)
+                    else if (FormatSelectedIndex == FormatMode.anchorsFindStr)
                     {
                         Range rect = GetRange();
                         double width = ColorInfo.Width;
@@ -400,15 +393,15 @@ namespace ScriptGraphicHelper.ViewModels
 
                          if (Range.IndexOf("[") != -1)
                          {
-                             Range = string.Format("[{0}]", rect.ToStr());
+                             Range = string.Format("[{0}]", rect.ToString());
                          }
-                         else if (FormatSelectedIndex == (int)FormatMode.anchorsCompareStr || FormatSelectedIndex == (int)FormatMode.anchorsFindStr)
+                         else if (FormatSelectedIndex == FormatMode.anchorsCompareStr || FormatSelectedIndex == FormatMode.anchorsFindStr)
                          {
-                             Range = rect.ToStr(2);
+                             Range = rect.ToString(2);
                          }
                          else
                          {
-                             Range = rect.ToStr();
+                             Range = rect.ToString();
                          }
 
                          CreateStr = CreateColorStrHelper.Create((FormatMode)FormatSelectedIndex, ColorInfos, rect);
@@ -416,7 +409,7 @@ namespace ScriptGraphicHelper.ViewModels
                  });
         public ICommand Format_SelectionChanged => new DelegateCommand<MainWindow>((e) =>
         {
-            if (FormatSelectedIndex == 10 || FormatSelectedIndex == 11)
+            if (FormatSelectedIndex == FormatMode.anchorsCompareStr || FormatSelectedIndex == FormatMode.anchorsFindStr)
             {
                 if (e.TheAnchors.Visibility != Visibility.Visible)
                 {
@@ -432,6 +425,7 @@ namespace ScriptGraphicHelper.ViewModels
                 }
             }
         });
+
         public Range GetRange()
         {
             if (Range != null)
@@ -447,8 +441,8 @@ namespace ScriptGraphicHelper.ViewModels
             {
                 return new Range(0, 0, ImgWidth, ImgHeight);
             }
-            double imgWidth = ColorInfo.Width - 1;
-            double imgHeight = ColorInfo.Height - 1;
+            double imgWidth = FormatSelectedIndex==FormatMode.anchorsCompareStr|| FormatSelectedIndex == FormatMode.anchorsFindStr? ColorInfo.Width - 1: ImgWidth;
+            double imgHeight = FormatSelectedIndex == FormatMode.anchorsCompareStr || FormatSelectedIndex == FormatMode.anchorsFindStr ? ColorInfo.Height - 1 : ImgHeight;
             double left = ImgWidth;
             double top = ImgHeight;
             double right = 0;
@@ -483,6 +477,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             return new Range(left >= 50 ? left - 50 : 0, top >= 50 ? top - 50 : 0, right + 50 > imgWidth ? imgWidth : right + 50, bottom + 50 > imgHeight ? imgHeight : bottom + 50, mode_1, mode_2);
         }
+
         private Point StartPoint { get; set; }
         private Point EndPoint { get; set; }
         public ICommand Key_AddColorInfo => new DelegateCommand<string>((key) =>
@@ -491,7 +486,7 @@ namespace ScriptGraphicHelper.ViewModels
             {
                 byte[] bytes = GraphicHelper.GetPixel((int)PointX, (int)PointY);
                 Color color = Color.FromArgb(255, bytes[0], bytes[1], bytes[2]);
-                if (FormatSelectedIndex != 10 && FormatSelectedIndex != 11)
+                if (FormatSelectedIndex != FormatMode.anchorsCompareStr && FormatSelectedIndex != FormatMode.anchorsFindStr)
                 {
                     if (key == "A")
                     {
@@ -599,7 +594,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             byte[] bytes = GraphicHelper.GetPixel((int)PointX, (int)PointY);
             Color color = Color.FromArgb(255, bytes[0], bytes[1], bytes[2]);
-            if (FormatSelectedIndex != 10 && FormatSelectedIndex != 11)
+            if (FormatSelectedIndex != FormatMode.anchorsCompareStr && FormatSelectedIndex != FormatMode.anchorsFindStr)
             {
                 ColorInfos.Add(new ColorInfo(ColorInfos.Count, new Point(PointX, PointY), color));
             }

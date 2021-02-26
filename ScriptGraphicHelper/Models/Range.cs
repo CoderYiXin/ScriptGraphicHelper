@@ -22,7 +22,7 @@ namespace ScriptGraphicHelper.Models
             Mode_1 = mode_1;
             Mode_2 = mode_2;
         }
-        public string ToStr(int mode = 0)
+        public string ToString(int mode = 0)
         {
 
             if (mode == 1)
